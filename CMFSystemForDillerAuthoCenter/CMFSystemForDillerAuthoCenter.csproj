@@ -69,10 +69,44 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CallWindow\AddCarWindow.xaml.cs">
+      <DependentUpon>AddCarWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallWindow\AddEditDealWindow.xaml.cs">
+      <DependentUpon>AddEditDealWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallWindow\NewDealsVariant1.xaml.cs">
+      <DependentUpon>NewDealsVariant1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallWindow\NewDealsVariant2.xaml.cs">
+      <DependentUpon>NewDealsVariant2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CarBrandData.cs" />
+    <Compile Include="CarData.cs" />
+    <Compile Include="DealData.cs" />
     <Compile Include="WidthToVisibilityConverter.cs" />
+    <Compile Include="Windows\NewDealsWindow.xaml.cs">
+      <DependentUpon>NewDealsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\WarehouseWindow.xaml.cs">
       <DependentUpon>WarehouseWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="CallWindow\AddCarWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\AddEditDealWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\NewDealsVariant1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\NewDealsVariant2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -85,6 +119,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\NewDealsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\WarehouseWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

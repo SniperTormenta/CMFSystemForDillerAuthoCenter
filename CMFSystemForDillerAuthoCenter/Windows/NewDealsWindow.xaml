@@ -1,17 +1,18 @@
-﻿<Window x:Class="CMFSystemForDillerAuthoCenter.Windows.WarehouseWindow"
-       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window x:Class="CMFSystemForDillerAuthoCenter.Windows.NewDealsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.Windows"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="WarehouseWindow" Height="1080" Width="1920"
         WindowStartupLocation="CenterScreen"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}">
+        Background="{DynamicResource MaterialDesignPaper}"
+        Title="NewDealsWindow" Height="1080" Width="1920">
 
     <Grid>
-        <!-- Статичный сайдбар слева -->
+        <!-- Сайдбар слева -->
         <Border Width="200" Background="#FF2A2E40" HorizontalAlignment="Left">
             <StackPanel>
                 <ListView Background="Transparent" BorderThickness="0">
@@ -28,7 +29,7 @@
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
-                        <StackPanel x:Name="GoToMainMenu" Orientation="Horizontal" MouseLeftButtonDown="GoToMainMenu_MouseLeftButtonDown">
+                        <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <TextBlock Text="Главная" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
                         </StackPanel>
@@ -89,50 +90,27 @@
         </Border>
 
         <!-- Основной контент -->
-        <Grid Margin="200,0,200,0">
+        <Grid Margin="200,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Кнопка добавления новой машины -->
-            <Button x:Name="AddCarButton" Grid.Row="0" Content="Добавить автомобиль"  
-                    Margin="10" HorizontalAlignment="Right" Click="AddCarButton_Click"/>
-
-            <!-- DataGrid с автомобилями -->
-            <DataGrid x:Name="CarsDataGrid" Grid.Row="1" ItemsSource="{Binding Cars}" 
-                      AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" 
-                      MouseDoubleClick="CarsDataGrid_MouseDoubleClick">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
-                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="150"/>
-                    <DataGridTextColumn Header="Тип авто" Binding="{Binding Type}" Width="100"/>
-                    <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="80"/>
-                    <DataGridTextColumn Header="Марка" Binding="{Binding Brand}" Width="100"/>
-                    <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="100"/>
-                    <DataGridTextColumn Header="Год выпуска" Binding="{Binding Year}" Width="100"/>
-                    <DataGridTextColumn Header="Двигатель" Binding="{Binding Engine}" Width="100"/>
-                    <DataGridTextColumn Header="Привод" Binding="{Binding Drive}" Width="100"/>
-                    <DataGridTextColumn Header="Тип кузова" Binding="{Binding BodyType}" Width="100"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
-
-        <!-- Фильтр по брендам справа -->
-        <Border Width="200" Background="#FFF5F5F5" HorizontalAlignment="Right">
-            <StackPanel>
-                <TextBlock Text="Фильтр по брендам" FontSize="16" Margin="10"/>
-                <ListBox x:Name="BrandsListBox" ItemsSource="{Binding Brands}" Margin="10">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding LogoPath}" Width="24" Height="24" Margin="5,0"/>
-                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            <!-- Панель управления -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,10,20,10">
+                <TextBlock Text="Переключение вида" FontSize="24" FontWeight="Bold" Margin="0,0,30,0" VerticalAlignment="Center"/>
+                <ToggleButton x:Name="ViewToggleButton" 
+                              Style="{StaticResource MaterialDesignSwitchToggleButton}"
+                              Width="140" 
+                              Height="60" 
+                              FontSize="11" 
+                              Padding="9" 
+                              Checked="ViewToggleButton_Checked" 
+                              Unchecked="ViewToggleButton_Unchecked"/>
             </StackPanel>
-        </Border>
+
+            <!-- Контейнер для вариантов -->
+            <ContentControl x:Name="DealsContent" Grid.Row="1" Margin="20"/>
+        </Grid>
     </Grid>
 </Window>

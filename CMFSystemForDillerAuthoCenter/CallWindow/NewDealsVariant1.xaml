@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="CMFSystemForDillerAuthoCenter.CallWindow.NewDealsVariant1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Height="450" Width="800">
+    <Grid>
+        <!-- Определение строк: фильтры и таблицы -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Фильтры -->
+            <RowDefinition Height="*"/>
+            <!-- Таблицы -->
+        </Grid.RowDefinitions>
+
+        <!-- Панель фильтров -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+            <ComboBox x:Name="TypeFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Тип сделки">
+                <ComboBoxItem Content="Все" IsSelected="True"/>
+                <ComboBoxItem Content="Обращение"/>
+                <ComboBoxItem Content="Заказ"/>
+            </ComboBox>
+            <ComboBox x:Name="StatusFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Статус">
+                <ComboBoxItem Content="Все" IsSelected="True"/>
+            </ComboBox>
+            <TextBox x:Name="SearchTextBox" Width="200" materialDesign:HintAssist.Hint="Поиск по клиенту или ID" Margin="0,0,10,0"/>
+            <Button x:Name="AddDealButton" Content="Добавить сделку" 
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
+                    Width="150" 
+                    Click="AddDealButton_Click"/>
+        </StackPanel>
+
+        <!-- Два столбца: Обращения и Заказы -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!-- Обращения -->
+                <ColumnDefinition Width="*"/>
+                <!-- Заказы -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Столбец 1: Обращения -->
+            <GroupBox Grid.Column="0" Header="Обращения" Margin="0,0,10,0">
+                <DataGrid x:Name="AppealsDataGrid" 
+                          ItemsSource="{Binding Appeals}" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          MouseDoubleClick="AppealsDataGrid_MouseDoubleClick_1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*"/>
+                        <DataGridTextColumn Header="Дата" Binding="{Binding Date}" Width="100"/>
+                        <DataGridTextColumn Header="Тема" Binding="{Binding Theme}" Width="*"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <!-- Столбец 2: Заказы -->
+            <GroupBox Grid.Column="1" Header="Заказы" Margin="10,0,0,0">
+                <DataGrid x:Name="OrdersDataGrid" 
+                          ItemsSource="{Binding Orders}" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          MouseDoubleClick="OrdersDataGrid_MouseDoubleClick_1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*"/>
+                        <DataGridTextColumn Header="Дата" Binding="{Binding Date}" Width="100"/>
+                        <DataGridTextColumn Header="Автомобиль" Binding="{Binding CarId}" Width="*"/>
+                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount}" Width="100"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>

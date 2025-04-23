@@ -13,7 +13,7 @@
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
+
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
         <!-- Статичный сайдбар слева -->
@@ -39,13 +39,11 @@
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
-                        <Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Link" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                                <TextBlock Text="Сделки" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
-                            </StackPanel>
-                            <materialDesign:PackIcon Kind="Circle" Width="10" Height="10" Foreground="Red" Margin="35,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                        </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Link" Width="24" Height="24" Margin="10,0" Foreground="White"/>
+                            <Button x:Name="NewDealsButton" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
+                Foreground="White" Click="NewDealsButton_Click"/>
+                        </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
@@ -72,7 +70,7 @@
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel x:Name="SkadButton" Orientation="Horizontal" MouseLeftButtonDown="SkadButton_MouseLeftButtonDown" >
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <TextBlock Text="Товары" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
                         </StackPanel>

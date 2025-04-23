@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CMFSystemForDillerAuthoCenter.Windows;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -134,6 +135,20 @@ namespace CMFSystemForDillerAuthoCenter
         {
             SaveData();
             base.OnClosing(e);
+        }
+
+        private void SkadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            WarehouseWindow warehouseWindow = new WarehouseWindow();
+            warehouseWindow.Show();
+            this.Close();
+        }
+
+        private void NewDealsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var carData = new CarData(); // Загрузите из файла или передайте из другого окна
+            var newDealsWindow = new NewDealsWindow(carData);
+            newDealsWindow.Show();
         }
     }
 }
