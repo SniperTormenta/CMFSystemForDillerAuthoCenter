@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Height="450" Width="800">
+        Height="450" Width="1000">
     <Grid>
         <!-- Определение строк: фильтры и таблицы -->
         <Grid.RowDefinitions>

@@ -19,29 +19,35 @@
         </Grid.ColumnDefinitions>
 
         <!-- Левая колонка -->
-        <StackPanel Grid.Column="0" Margin="10">
+        <StackPanel Grid.Column="0" Margin="20">
+            <!-- Тип сделки -->
             <TextBlock Text="Тип сделки" FontSize="14" Margin="0,0,0,5"/>
             <ComboBox x:Name="TypeComboBox" Margin="0,0,0,10" SelectionChanged="TypeComboBox_SelectionChanged">
                 <ComboBoxItem Content="Обращение"/>
                 <ComboBoxItem Content="Заказ"/>
             </ComboBox>
 
-            <TextBlock Text="Имя клиента" FontSize="14" Margin="0,0,0,5"/>
+            <!-- ФИО клиента -->
+            <TextBlock Text="ФИО клиента *" FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="ClientNameTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Телефон клиента" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="ClientPhoneTextBox" Margin="0,0,0,10"/>
+            <!-- Телефон клиента -->
+            <TextBlock Text="Телефон клиента *" FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="ClientPhoneTextBox" Margin="0,0,0,10" PreviewTextInput="ClientPhoneTextBox_PreviewTextInput"/>
 
+            <!-- Email клиента -->
             <TextBlock Text="Email клиента" FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="ClientEmailTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Дата" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="DateTextBox" Margin="0,0,0,10"/>
+            <!-- Дата -->
+            <TextBlock Text="Дата *" FontSize="14" Margin="0,0,0,5"/>
+            <DatePicker x:Name="DatePicker" Margin="0,0,0,10"/>
 
-            <!-- Поля для обращений -->
-            <TextBlock Text="Тема обращения" FontSize="14" Margin="0,0,0,5" x:Name="ThemeLabel"/>
+            <!-- Тема обращения -->
+            <TextBlock Text="Тема обращения *" FontSize="14" Margin="0,0,0,5" x:Name="ThemeLabel"/>
             <TextBox x:Name="ThemeTextBox" Margin="0,0,0,10"/>
 
+            <!-- Статус обращения -->
             <TextBlock Text="Статус" FontSize="14" Margin="0,0,0,5"/>
             <ComboBox x:Name="AppealStatusComboBox" Margin="0,0,0,10">
                 <ComboBoxItem Content="Новое"/>
@@ -51,27 +57,42 @@
         </StackPanel>
 
         <!-- Правая колонка -->
-        <StackPanel Grid.Column="1" Margin="10">
-            <!-- Поля для заказов -->
-            <TextBlock Text="Автомобиль" FontSize="14" Margin="0,0,0,5" x:Name="CarLabel" Visibility="Collapsed"/>
-            <ComboBox x:Name="CarComboBox" Margin="0,0,0,10" Visibility="Collapsed"/>
+        <StackPanel Grid.Column="1" Margin="20">
+            <!-- Подробности (для обращений) -->
+            <TextBlock Text="Подробности" FontSize="14" Margin="0,0,0,5" x:Name="NotesLabel"/>
+            <TextBox x:Name="NotesTextBox" Height="100" AcceptsReturn="True" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Сумма" FontSize="14" Margin="0,0,0,5" x:Name="AmountLabel" Visibility="Collapsed"/>
+            <!-- Автомобиль (для заказов) -->
+            <TextBlock Text="Автомобиль *" FontSize="14" Margin="0,0,0,5" x:Name="CarLabel" Visibility="Collapsed"/>
+            <ComboBox x:Name="CarComboBox" Margin="0,0,0,10" Visibility="Collapsed" SelectionChanged="CarComboBox_SelectionChanged"/>
+
+            <!-- Фото автомобиля -->
+            <Image x:Name="CarImage" Height="100" Margin="0,0,0,10" Visibility="Collapsed" Stretch="Uniform"/>
+
+            <!-- Сумма сделки -->
+            <TextBlock Text="Сумма сделки *" FontSize="14" Margin="0,0,0,5" x:Name="AmountLabel" Visibility="Collapsed"/>
             <TextBox x:Name="AmountTextBox" Margin="0,0,0,10" Visibility="Collapsed"/>
 
-            <TextBlock Text="Условия оплаты" FontSize="14" Margin="0,0,0,5" x:Name="PaymentTermsLabel" Visibility="Collapsed"/>
+            <!-- Условия сделки -->
+            <TextBlock Text="Условия сделки" FontSize="14" Margin="0,0,0,5" x:Name="PaymentTermsLabel" Visibility="Collapsed"/>
             <ComboBox x:Name="PaymentTermsComboBox" Margin="0,0,0,10" Visibility="Collapsed">
-                <ComboBoxItem Content="Наличные"/>
                 <ComboBoxItem Content="Кредит"/>
                 <ComboBoxItem Content="Рассрочка"/>
             </ComboBox>
 
-            <TextBlock Text="Дата доставки" FontSize="14" Margin="0,0,0,5" x:Name="DeliveryDateLabel" Visibility="Collapsed"/>
-            <TextBox x:Name="DeliveryDateTextBox" Margin="0,0,0,10" Visibility="Collapsed"/>
+            <!-- CheckBox для доставки -->
+            <CheckBox x:Name="DeliveryCheckBox" Content="Требуется доставка" Margin="0,0,0,10" Visibility="Collapsed" 
+                      Checked="DeliveryCheckBox_Checked" Unchecked="DeliveryCheckBox_Unchecked"/>
 
+            <!-- Дата доставки -->
+            <TextBlock Text="Дата доставки" FontSize="14" Margin="0,0,0,5" x:Name="DeliveryDateLabel" Visibility="Collapsed"/>
+            <DatePicker x:Name="DeliveryDatePicker" Margin="0,0,0,10" Visibility="Collapsed"/>
+
+            <!-- Адрес доставки -->
             <TextBlock Text="Адрес доставки" FontSize="14" Margin="0,0,0,5" x:Name="DeliveryAddressLabel" Visibility="Collapsed"/>
             <TextBox x:Name="DeliveryAddressTextBox" Margin="0,0,0,10" Visibility="Collapsed"/>
 
+            <!-- Статус заказа -->
             <TextBlock Text="Статус заказа" FontSize="14" Margin="0,0,0,5" x:Name="OrderStatusLabel" Visibility="Collapsed"/>
             <ComboBox x:Name="OrderStatusComboBox" Margin="0,0,0,10" Visibility="Collapsed">
                 <ComboBoxItem Content="Подтвержден"/>
@@ -80,19 +101,12 @@
                 <ComboBoxItem Content="Оплачен"/>
                 <ComboBoxItem Content="Закрыт"/>
             </ComboBox>
-
-            <TextBlock Text="Примечания" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="NotesTextBox" Height="100" AcceptsReturn="True" Margin="0,0,0,10"/>
         </StackPanel>
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button x:Name="SaveButton" Content="Сохранить" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Click="SaveButton_Click" Margin="0,0,10,0"/>
-            <Button x:Name="CancelButton" Content="Отмена" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Click="CancelButton_Click"/>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
+            <Button x:Name="SaveButton" Content="Сохранить" Click="SaveButton_Click" Margin="0,0,10,0" Width="100"/>
+            <Button x:Name="CancelButton" Content="Отмена" Click="CancelButton_Click" Width="100"/>
         </StackPanel>
     </Grid>
 </Window>
