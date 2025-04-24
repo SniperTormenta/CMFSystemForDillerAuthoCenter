@@ -166,5 +166,11 @@ namespace CMFSystemForDillerAuthoCenter
             newDealsWindow.Show();
             Close();
         }
+
+        private void EmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            var emailwindow = new EmailWindow();
+            emailwindow.Show();
+        }
     }
 }

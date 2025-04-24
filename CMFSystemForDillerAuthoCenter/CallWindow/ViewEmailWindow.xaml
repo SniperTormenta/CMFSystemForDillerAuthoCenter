@@ -1,0 +1,39 @@
+﻿<Window x:Class="CMFSystemForDillerAuthoCenter.CallWindow.ViewEmailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
+        mc:Ignorable="d"
+        Title="ViewEmailWindow" Height="500" Width="600">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding Sender, StringFormat=От: {0}}" Margin="0,0,0,5"/>
+        <TextBlock Grid.Row="1" Text="{Binding Recipients[0], StringFormat=Кому: {0}}" Margin="0,0,0,5"/>
+        <TextBlock Grid.Row="2" Text="{Binding Subject, StringFormat=Тема: {0}}" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="3" Text="{Binding Body}" IsReadOnly="True" TextWrapping="Wrap" Margin="0,0,0,5"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <TextBlock Text="Вложения:" Margin="0,0,5,0"/>
+            <ItemsControl ItemsSource="{Binding Attachments}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding}" Click="DownloadAttachmentButton_Click" Margin="0,0,5,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</Window>
+

@@ -34,7 +34,8 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Email" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Почта" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
+                            <Button x:Name="EmailButton" Content="Почта" Style="{StaticResource MaterialDesignFlatButton}" 
+                Foreground="White" Click="EmailButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">

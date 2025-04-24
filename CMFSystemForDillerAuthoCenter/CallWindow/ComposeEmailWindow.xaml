@@ -1,0 +1,29 @@
+﻿<Window x:Class="CMFSystemForDillerAuthoCenter.CallWindow.ComposeEmailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
+        mc:Ignorable="d"
+        Title="ComposeEmailWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBox x:Name="ToTextBox" Grid.Row="0" Margin="0,0,0,5" />
+        <TextBox x:Name="SubjectTextBox" Grid.Row="1" Margin="0,0,0,5" />
+        <Button Content="Добавить вложение" Click="AddAttachmentButton_Click" Grid.Row="2" Margin="0,0,0,5"/>
+        <TextBlock x:Name="AttachmentsTextBlock" Grid.Row="3" Margin="0,0,0,5"/>
+        <TextBox x:Name="BodyTextBox" Grid.Row="4" AcceptsReturn="True" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Отправить" Click="SendButton_Click" Margin="0,0,10,0"/>
+            <Button Content="Отмена" Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
