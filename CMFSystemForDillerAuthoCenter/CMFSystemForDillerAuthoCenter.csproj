@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="CarBrandData.cs" />
     <Compile Include="CarData.cs" />
+    <Compile Include="DataStorage.cs" />
     <Compile Include="DealData.cs" />
     <Compile Include="WidthToVisibilityConverter.cs" />
     <Compile Include="Windows\NewDealsWindow.xaml.cs">

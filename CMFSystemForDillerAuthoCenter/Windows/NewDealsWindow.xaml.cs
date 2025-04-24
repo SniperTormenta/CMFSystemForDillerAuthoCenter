@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace CMFSystemForDillerAuthoCenter.Windows
 {
@@ -21,62 +22,36 @@ namespace CMFSystemForDillerAuthoCenter.Windows
     {
         private DealData dealData;
         private CarData carData;
-        private const string DealsJsonFilePath = "deals.json";
         private UserControl variant1;
         private UserControl variant2;
 
         public NewDealsWindow(CarData carData)
         {
             InitializeComponent();
-            this.carData = carData;
-            LoadDeals();
+            this.carData = DataStorage.CarData;
+            DataStorage.LoadDeals();
+            dealData = DataStorage.DealData;
+            System.Diagnostics.Debug.WriteLine($"NewDealsWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
             InitializeVariants();
             SetInitialView();
         }
 
         public NewDealsWindow()
         {
-        }
-
-        private void LoadDeals()
-        {
-            try
-            {
-                if (File.Exists(DealsJsonFilePath))
-                {
-                    string json = File.ReadAllText(DealsJsonFilePath);
-                    dealData = JsonConvert.DeserializeObject<DealData>(json);
-                }
-                else
-                {
-                    dealData = new DealData();
-                    SaveDeals();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при загрузке сделок: {ex.Message}");
-                dealData = new DealData();
-            }
-        }
-
-        private void SaveDeals()
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(dealData, Formatting.Indented);
-                File.WriteAllText(DealsJsonFilePath, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при сохранении сделок: {ex.Message}");
-            }
+            InitializeComponent();
+            DataStorage.LoadCars();
+            carData = DataStorage.CarData;
+            DataStorage.LoadDeals();
+            dealData = DataStorage.DealData;
+            InitializeVariants();
+            SetInitialView();
         }
 
         private void InitializeVariants()
         {
-            variant1 = new NewDealsVariant1(dealData, carData, SaveDeals);
-            variant2 = new NewDealsVariant2(dealData, carData, SaveDeals);
+            System.Diagnostics.Debug.WriteLine($"InitializeVariants: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            variant1 = new NewDealsVariant1(dealData, carData, DataStorage.SaveDeals);
+            variant2 = new NewDealsVariant2(dealData, carData, DataStorage.SaveDeals);
         }
 
         private void SetInitialView()
@@ -99,7 +74,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            SaveDeals();
+            DataStorage.SaveDeals();
+            DataStorage.SaveCars();
             base.OnClosing(e);
         }
     }

@@ -21,14 +21,15 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         private CarData carData;
         private Deal deal;
         private string initialType;
-        private decimal amount;
 
         public AddEditDealWindow(DealData dealData, CarData carData, Deal dealToEdit = null, string defaultType = null)
         {
             InitializeComponent();
-            this.dealData = dealData;
-            this.carData = carData;
-            this.deal = dealToEdit ?? new Deal { Id = $"D{dealData.Deals.Count + 1:D03}" };
+            this.dealData = DataStorage.DealData;
+            this.carData = DataStorage.CarData;
+            this.deal = dealToEdit ?? new Deal { Id = $"D{(dealData?.Deals?.Count ?? 0) + 1:D03}" };
+
+            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
 
             InitializeCarComboBox();
             InitializeForm(defaultType);
@@ -41,9 +42,21 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void InitializeCarComboBox()
         {
+            if (carData == null || !carData.Cars.Any())
+            {
+                MessageBox.Show("Список автомобилей пуст. Добавьте автомобили в склад перед созданием заказа.");
+                CarComboBox.IsEnabled = false;
+                return;
+            }
+
+            CarComboBox.Items.Clear();
             foreach (var car in carData.Cars)
             {
-                CarComboBox.Items.Add($"{car.Id}: {car.Brand} {car.Model}");
+                CarComboBox.Items.Add(new ComboBoxItem
+                {
+                    Content = $"{car.Id}: {car.Brand} {car.Model} ({car.Year})",
+                    Tag = car.Id
+                });
             }
         }
 
@@ -83,9 +96,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             {
                 OrderStatusComboBox.SelectedItem = OrderStatusComboBox.Items.Cast<ComboBoxItem>()
                     .FirstOrDefault(i => i.Content.ToString() == deal.Status);
-                CarComboBox.SelectedItem = CarComboBox.Items.Cast<string>()
-                    .FirstOrDefault(i => i.StartsWith(deal.CarId));
+
+                CarComboBox.SelectedItem = CarComboBox.Items.Cast<ComboBoxItem>()
+                    .FirstOrDefault(i => i.Tag.ToString() == deal.CarId);
+
                 UpdateCarImage();
+
                 AmountTextBox.Text = deal.Amount.ToString();
                 PaymentTermsComboBox.SelectedItem = PaymentTermsComboBox.Items.Cast<ComboBoxItem>()
                     .FirstOrDefault(i => i.Content.ToString() == deal.PaymentTerms);
@@ -148,6 +164,14 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 CarLabel.Visibility = Visibility.Visible;
                 CarComboBox.Visibility = Visibility.Visible;
                 CarImage.Visibility = Visibility.Visible;
+                if (carData != null && carData.Cars.Any())
+                {
+                    CarComboBox.IsEnabled = true;
+                }
+                else
+                {
+                    CarComboBox.IsEnabled = false;
+                }
                 AmountLabel.Visibility = Visibility.Visible;
                 AmountTextBox.Visibility = Visibility.Visible;
                 PaymentTermsLabel.Visibility = Visibility.Visible;
@@ -182,8 +206,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         {
             if (CarComboBox.SelectedItem != null)
             {
-                var selectedCarId = CarComboBox.SelectedItem.ToString().Split(':')[0];
-                var selectedCar = carData.Cars.FirstOrDefault(c => c.Id == selectedCarId);
+                var selectedCarId = (CarComboBox.SelectedItem as ComboBoxItem)?.Tag.ToString();
+                var selectedCar = carData?.Cars.FirstOrDefault(c => c.Id == selectedCarId);
                 if (selectedCar != null && !string.IsNullOrEmpty(selectedCar.PhotoPath))
                 {
                     try
@@ -234,7 +258,6 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         {
             try
             {
-                // Проверка обязательных полей
                 if (string.IsNullOrWhiteSpace(ClientNameTextBox.Text))
                 {
                     MessageBox.Show("Пожалуйста, укажите ФИО клиента.");
@@ -276,9 +299,10 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                         MessageBox.Show("Пожалуйста, укажите корректную сумму сделки.");
                         return;
                     }
+
+                    deal.Amount = amount;
                 }
 
-                // Заполнение данных
                 deal.ClientName = ClientNameTextBox.Text;
                 deal.ClientPhone = ClientPhoneTextBox.Text;
                 deal.ClientEmail = ClientEmailTextBox.Text;
@@ -292,8 +316,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 }
                 else
                 {
-                    deal.CarId = CarComboBox.SelectedItem?.ToString()?.Split(':')[0];
-                    deal.Amount = amount; // Используем amount, объявленный в TryParse
+                    deal.CarId = (CarComboBox.SelectedItem as ComboBoxItem)?.Tag.ToString();
                     deal.PaymentTerms = (PaymentTermsComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
                     deal.IsDeliveryRequired = DeliveryCheckBox.IsChecked ?? false;
                     if (deal.IsDeliveryRequired)
@@ -313,6 +336,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 {
                     dealData.Deals.Add(deal);
                 }
+
+                DataStorage.SaveDeals();
 
                 DialogResult = true;
                 Close();

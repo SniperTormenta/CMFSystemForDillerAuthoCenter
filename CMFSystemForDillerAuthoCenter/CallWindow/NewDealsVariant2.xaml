@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <!-- Вкладки -->
-        <TabControl Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource MaterialDesignTabControl}">
+        <TabControl Grid.Row="1" Margin="0,0,0,10">
             <!-- Вкладка 1: Обращения -->
             <TabItem Header="Обращения">
                 <Grid>
@@ -31,16 +31,14 @@
 
                     <!-- Панель фильтров для обращений -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,15">
-                        <ComboBox x:Name="AppealStatusFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Статус">
+                        <ComboBox x:Name="AppealStatusFilterComboBox" Width="150" Margin="0,0,10,0" ToolTip="Статус">
                             <ComboBoxItem Content="Все" IsSelected="True"/>
                         </ComboBox>
-                        <TextBox x:Name="AppealSearchTextBox" Width="200" materialDesign:HintAssist.Hint="Поиск по клиенту или ID" Margin="0,0,10,0"/>
+                        <TextBox x:Name="AppealSearchTextBox" Width="200" Margin="0,0,10,0" ToolTip="Поиск по клиенту или ID"/>
                         <Button x:Name="AddAppealButton" Content="Добавить обращение" 
-                                Style="{StaticResource MaterialDesignRaisedButton}" 
                                 Width="150" 
                                 Click="AddAppealButton_Click"/>
                         <Button x:Name="ConvertToOrderButton" Content="Преобразовать в заказ" 
-                                Style="{StaticResource MaterialDesignRaisedButton}" 
                                 Width="150" 
                                 Margin="10,0,0,0" 
                                 Click="ConvertToOrderButton_Click"/>
@@ -72,12 +70,11 @@
 
                     <!-- Панель фильтров для заказов -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,15">
-                        <ComboBox x:Name="OrderStatusFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Статус">
+                        <ComboBox x:Name="OrderStatusFilterComboBox" Width="150" Margin="0,0,10,0" ToolTip="Статус">
                             <ComboBoxItem Content="Все" IsSelected="True"/>
                         </ComboBox>
-                        <TextBox x:Name="OrderSearchTextBox" Width="200" materialDesign:HintAssist.Hint="Поиск по клиенту или ID" Margin="0,0,10,0"/>
+                        <TextBox x:Name="OrderSearchTextBox" Width="200" Margin="0,0,10,0" ToolTip="Поиск по клиенту или ID"/>
                         <Button x:Name="AddOrderButton" Content="Добавить заказ" 
-                                Style="{StaticResource MaterialDesignRaisedButton}" 
                                 Width="150" 
                                 Click="AddOrderButton_Click"/>
                     </StackPanel>

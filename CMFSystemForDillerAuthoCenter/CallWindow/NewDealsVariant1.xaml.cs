@@ -23,8 +23,28 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         public NewDealsVariant1(DealData dealData, CarData carData, Action saveAction)
         {
             InitializeComponent();
-            this.dealData = dealData;
+
+            // Проверяем, что dealData не null
+            if (dealData == null)
+            {
+                MessageBox.Show("Ошибка: DealData не инициализирован.");
+                this.dealData = new DealData();
+            }
+            else
+            {
+                this.dealData = dealData;
+            }
+
+            // Убедимся, что Deals инициализирован
+            if (this.dealData.Deals == null)
+            {
+                this.dealData.Deals = new System.Collections.Generic.List<Deal>();
+            }
+
+            // Проверяем carData
             this.carData = carData;
+            MessageBox.Show($"NewDealsVariant1: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+
             this.saveAction = saveAction;
             InitializeDataGrids();
             InitializeFilters();
@@ -45,7 +65,10 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             var statuses = dealData.Deals.Select(d => d.Status).Distinct().ToList();
             foreach (var status in statuses)
             {
-                StatusFilterComboBox.Items.Add(status);
+                if (!string.IsNullOrEmpty(status))
+                {
+                    StatusFilterComboBox.Items.Add(new ComboBoxItem { Content = status });
+                }
             }
         }
 
@@ -55,26 +78,24 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             var statusFilter = (StatusFilterComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
             var searchText = SearchTextBox.Text.ToLower();
 
-            // Фильтрация обращений
             var filteredAppeals = dealData.Deals.Where(d =>
                 d.Type == "Обращение" &&
                 (typeFilter == "Все" || typeFilter == "Обращение") &&
                 (statusFilter == "Все" || d.Status == statusFilter) &&
                 (string.IsNullOrEmpty(searchText) ||
-                 d.ClientName.ToLower().Contains(searchText) ||
-                 d.Id.ToLower().Contains(searchText)))
+                 (d.ClientName != null && d.ClientName.ToLower().Contains(searchText)) ||
+                 (d.Id != null && d.Id.ToLower().Contains(searchText))))
                 .ToList();
 
             AppealsDataGrid.ItemsSource = filteredAppeals;
 
-            // Фильтрация заказов
             var filteredOrders = dealData.Deals.Where(d =>
                 d.Type == "Заказ" &&
                 (typeFilter == "Все" || typeFilter == "Заказ") &&
                 (statusFilter == "Все" || d.Status == statusFilter) &&
                 (string.IsNullOrEmpty(searchText) ||
-                 d.ClientName.ToLower().Contains(searchText) ||
-                 d.Id.ToLower().Contains(searchText)))
+                 (d.ClientName != null && d.ClientName.ToLower().Contains(searchText)) ||
+                 (d.Id != null && d.Id.ToLower().Contains(searchText))))
                 .ToList();
 
             OrdersDataGrid.ItemsSource = filteredOrders;
@@ -87,11 +108,11 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             if (addDealWindow.ShowDialog() == true)
             {
                 InitializeDataGrids();
-                saveAction();
+                saveAction?.Invoke();
             }
         }
 
-        private void AppealsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void AppealsDataGrid_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
         {
             if (AppealsDataGrid.SelectedItem is Deal selectedDeal)
             {
@@ -101,12 +122,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 if (editDealWindow.ShowDialog() == true)
                 {
                     InitializeDataGrids();
-                    saveAction();
+                    saveAction?.Invoke();
                 }
             }
         }
 
-        private void OrdersDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OrdersDataGrid_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
         {
             if (OrdersDataGrid.SelectedItem is Deal selectedDeal)
             {
@@ -116,19 +137,9 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 if (editDealWindow.ShowDialog() == true)
                 {
                     InitializeDataGrids();
-                    saveAction();
+                    saveAction?.Invoke();
                 }
             }
-        }
-
-        private void AppealsDataGrid_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void OrdersDataGrid_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
-        {
-
         }
     }
 }

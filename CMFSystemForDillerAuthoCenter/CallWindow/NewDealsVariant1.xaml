@@ -18,19 +18,16 @@
 
         <!-- Панель фильтров -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
-            <ComboBox x:Name="TypeFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Тип сделки">
+            <ComboBox x:Name="TypeFilterComboBox" Width="150" Margin="0,0,10,0" ToolTip="Тип сделки">
                 <ComboBoxItem Content="Все" IsSelected="True"/>
                 <ComboBoxItem Content="Обращение"/>
                 <ComboBoxItem Content="Заказ"/>
             </ComboBox>
-            <ComboBox x:Name="StatusFilterComboBox" Width="150" Margin="0,0,10,0" materialDesign:HintAssist.Hint="Статус">
+            <ComboBox x:Name="StatusFilterComboBox" Width="150" Margin="0,0,10,0" ToolTip="Статус">
                 <ComboBoxItem Content="Все" IsSelected="True"/>
             </ComboBox>
-            <TextBox x:Name="SearchTextBox" Width="200" materialDesign:HintAssist.Hint="Поиск по клиенту или ID" Margin="0,0,10,0"/>
-            <Button x:Name="AddDealButton" Content="Добавить сделку" 
-                    Style="{StaticResource MaterialDesignRaisedButton}" 
-                    Width="150" 
-                    Click="AddDealButton_Click"/>
+            <TextBox x:Name="SearchTextBox" Width="200" Margin="0,0,10,0" ToolTip="Поиск по клиенту или ID"/>
+            <Button x:Name="AddDealButton" Content="Добавить сделку" Width="150" Click="AddDealButton_Click"/>
         </StackPanel>
 
         <!-- Два столбца: Обращения и Заказы -->
@@ -45,7 +42,6 @@
             <!-- Столбец 1: Обращения -->
             <GroupBox Grid.Column="0" Header="Обращения" Margin="0,0,10,0">
                 <DataGrid x:Name="AppealsDataGrid" 
-                          ItemsSource="{Binding Appeals}" 
                           AutoGenerateColumns="False" 
                           CanUserAddRows="False" 
                           MouseDoubleClick="AppealsDataGrid_MouseDoubleClick_1">
@@ -62,7 +58,6 @@
             <!-- Столбец 2: Заказы -->
             <GroupBox Grid.Column="1" Header="Заказы" Margin="10,0,0,0">
                 <DataGrid x:Name="OrdersDataGrid" 
-                          ItemsSource="{Binding Orders}" 
                           AutoGenerateColumns="False" 
                           CanUserAddRows="False" 
                           MouseDoubleClick="OrdersDataGrid_MouseDoubleClick_1">
