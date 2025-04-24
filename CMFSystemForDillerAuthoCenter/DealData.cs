@@ -33,5 +33,6 @@ namespace CMFSystemForDillerAuthoCenter
         public bool IsDeliveryRequired { get; set; } // Для заказов: нужна ли доставка
         public string DeliveryDate { get; set; } // Для заказов
         public string DeliveryAddress { get; set; } // Для заказов
+        public string CarInfo { get; internal set; }
     }
 }

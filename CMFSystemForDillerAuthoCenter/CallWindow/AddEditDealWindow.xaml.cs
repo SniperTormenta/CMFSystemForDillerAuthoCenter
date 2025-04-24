@@ -30,6 +30,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             this.deal = dealToEdit ?? new Deal { Id = $"D{(dealData?.Deals?.Count ?? 0) + 1:D03}" };
 
             System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: dealData содержит {dealData?.Deals?.Count ?? 0} сделок перед редактированием.");
 
             InitializeCarComboBox();
             InitializeForm(defaultType);
@@ -338,6 +339,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 }
 
                 DataStorage.SaveDeals();
+
+                System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: После сохранения dealData содержит {dealData?.Deals?.Count ?? 0} сделок.");
 
                 DialogResult = true;
                 Close();

@@ -42,8 +42,6 @@ namespace CMFSystemForDillerAuthoCenter
         {
             try
             {
-                // Перед сохранением загружаем текущие данные из файла, чтобы не потерять изменения
-                LoadCars();
                 string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cars.json");
                 string json = JsonConvert.SerializeObject(CarData, Formatting.Indented);
                 File.WriteAllText(fullPath, json);
@@ -84,8 +82,6 @@ namespace CMFSystemForDillerAuthoCenter
         {
             try
             {
-                // Перед сохранением загружаем текущие данные из файла
-                LoadDeals();
                 string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "deals.json");
                 string json = JsonConvert.SerializeObject(DealData, Formatting.Indented);
                 File.WriteAllText(fullPath, json);

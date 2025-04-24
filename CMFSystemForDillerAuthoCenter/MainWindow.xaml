@@ -16,8 +16,13 @@
 
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
         <!-- Статичный сайдбар слева -->
-        <Border Width="200" Background="#FF2A2E40" HorizontalAlignment="Left">
+        <Border Width="200" Background="#FF2A2E40" HorizontalAlignment="Left" Grid.Column="0">
             <StackPanel>
                 <ListView Background="Transparent" BorderThickness="0">
                     <ListViewItem Height="50">
@@ -42,7 +47,7 @@
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Link" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="NewDealsButton" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
-                Foreground="White" Click="NewDealsButton_Click"/>
+                                    Foreground="White" Click="NewDealsButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
@@ -70,7 +75,7 @@
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
-                        <StackPanel x:Name="SkadButton" Orientation="Horizontal" MouseLeftButtonDown="SkadButton_MouseLeftButtonDown" >
+                        <StackPanel x:Name="SkadButton" Orientation="Horizontal" MouseLeftButtonDown="SkadButton_MouseLeftButtonDown">
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <TextBlock Text="Товары" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
                         </StackPanel>
@@ -91,58 +96,92 @@
             </StackPanel>
         </Border>
 
-        <!-- Основной контент -->
-        <Grid x:Name="MainContent" Margin="200,0,0,0">
+        <!-- Основное содержимое -->
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок с фильтрами -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <ComboBox Width="150" Margin="5" SelectedIndex="0">
-                    <ComboBoxItem Content="Новые"/>
-                    <ComboBoxItem Content="Переводы"/>
-                    <ComboBoxItem Content="Кангуляры"/>
-                    <ComboBoxItem Content="В работе"/>
-                </ComboBox>
-                <TextBlock Text="8" FontSize="16" Margin="5" Foreground="Green"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
+                <TextBlock Text="Главное меню" FontSize="20" FontWeight="Bold"/>
+                <Button Content="Перейти к складу" Click="GoToWarehouseButton_Click" Margin="10,0,0,0" HorizontalAlignment="Right"/>
             </StackPanel>
 
-            <!-- Карточки задач -->
-            <ListBox Grid.Row="1" x:Name="OrdersListBox" ItemsSource="{Binding Orders}" Margin="20" Background="Transparent" BorderThickness="0">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="4"/>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <materialDesign:Card Margin="10" Width="300" Background="{Binding BackgroundColor}">
-                            <StackPanel Margin="10">
-                                <TextBlock Text="{Binding Id}" FontSize="12" Foreground="Gray"/>
-                                <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" Margin="0,5"/>
-                                <TextBlock Text="{Binding Status}" FontSize="12" Margin="0,5"/>
-                                <TextBlock Text="{Binding Date, StringFormat={}{0:dd.MM.yy HH:mm}}" FontSize="12" Foreground="Gray" Margin="0,5"/>
-                                <TextBlock Text="{Binding CarModel}" FontSize="14" FontWeight="Bold" Margin="0,5"/>
-                                <TextBlock Text="{Binding Price, StringFormat={}{0:N0} ₽}" FontSize="14" Foreground="Green" Margin="0,5"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <materialDesign:PackIcon Kind="Phone" Width="16" Height="16" Margin="0,0,5,0"/>
-                                    <TextBlock Text="{Binding ClientPhone}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <materialDesign:PackIcon Kind="Account" Width="16" Height="16" Margin="0,0,5,0"/>
-                                    <TextBlock Text="{Binding ClientName}"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <materialDesign:PackIcon Kind="Message" Width="16" Height="16" Margin="0,0,5,0"/>
-                                    <TextBlock Text="{Binding Source}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </materialDesign:Card>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Колонка для обращений -->
+                <StackPanel Grid.Column="0" Margin="10">
+                    <TextBlock Text="Обращения" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ListView x:Name="AppealsListView" ItemsSource="{Binding Appeals}" BorderThickness="1" BorderBrush="Gray">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding Id}" FontWeight="Bold"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding Theme, StringFormat=Тема: {0}}"/>
+                                        <TextBlock Grid.Row="2" Text="{Binding ClientName, StringFormat=Клиент: {0}}"/>
+                                        <TextBlock Grid.Row="3" Text="{Binding ClientPhone, StringFormat=Телефон: {0}}"/>
+                                        <TextBlock Grid.Row="4" Text="{Binding Date, StringFormat=Дата: {0}}"/>
+                                        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                                            <Button Content="Редактировать" Tag="{Binding}" Click="EditAppealButton_Click" Margin="0,0,5,0"/>
+                                            <Button Content="Просмотр" Tag="{Binding}" Click="ViewAppealDetailsButton_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+
+                <!-- Колонка для заказов -->
+                <StackPanel Grid.Column="1" Margin="10">
+                    <TextBlock Text="Заказы" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ListView x:Name="OrdersListView" ItemsSource="{Binding Orders}" BorderThickness="1" BorderBrush="Gray">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding Id}" FontWeight="Bold"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding CarInfo, StringFormat=Машина: {0}}"/>
+                                        <TextBlock Grid.Row="2" Text="{Binding Date, StringFormat=Дата: {0}}"/>
+                                        <TextBlock Grid.Row="3" Text="{Binding Amount, StringFormat=Цена: {0}}"/>
+                                        <TextBlock Grid.Row="4" Text="{Binding ClientPhone, StringFormat=Телефон: {0}}"/>
+                                        <TextBlock Grid.Row="5" Text="{Binding ClientName, StringFormat=Клиент: {0}}"/>
+                                        <TextBlock Grid.Row="6" Text="{Binding Notes, StringFormat=Комментарии: {0}}"/>
+                                        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                                            <Button Content="Редактировать" Tag="{Binding}" Click="EditOrderButton_Click" Margin="0,0,5,0"/>
+                                            <Button Content="Просмотр" Tag="{Binding}" Click="ViewOrderDetailsButton_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

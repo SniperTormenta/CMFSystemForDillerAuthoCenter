@@ -32,6 +32,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             DataStorage.LoadDeals();
             dealData = DataStorage.DealData;
             System.Diagnostics.Debug.WriteLine($"NewDealsWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            System.Diagnostics.Debug.WriteLine($"NewDealsWindow: dealData содержит {dealData?.Deals?.Count ?? 0} сделок.");
             InitializeVariants();
             SetInitialView();
         }
@@ -43,6 +44,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             carData = DataStorage.CarData;
             DataStorage.LoadDeals();
             dealData = DataStorage.DealData;
+            System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): dealData содержит {dealData?.Deals?.Count ?? 0} сделок.");
             InitializeVariants();
             SetInitialView();
         }
@@ -50,6 +53,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         private void InitializeVariants()
         {
             System.Diagnostics.Debug.WriteLine($"InitializeVariants: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            System.Diagnostics.Debug.WriteLine($"InitializeVariants: dealData содержит {dealData?.Deals?.Count ?? 0} сделок.");
             variant1 = new NewDealsVariant1(dealData, carData, DataStorage.SaveDeals);
             variant2 = new NewDealsVariant2(dealData, carData, DataStorage.SaveDeals);
         }
@@ -57,25 +61,26 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         private void SetInitialView()
         {
             DealsContent.Content = variant1;
-            ViewToggleButton.Content = "Объединенный вид";
+            //ViewToggleButton.Content = "Объединенный вид";
         }
 
         private void ViewToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             DealsContent.Content = variant2;
-            ViewToggleButton.Content = "Вкладки";
+            //ViewToggleButton.Content = "Вкладки";
         }
 
         private void ViewToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
             DealsContent.Content = variant1;
-            ViewToggleButton.Content = "Объединенный вид";
+            //ViewToggleButton.Content = "Объединенный вид";
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             DataStorage.SaveDeals();
             DataStorage.SaveCars();
+            System.Diagnostics.Debug.WriteLine($"NewDealsWindow OnClosing: Сохранено {dealData?.Deals?.Count ?? 0} сделок.");
             base.OnClosing(e);
         }
     }

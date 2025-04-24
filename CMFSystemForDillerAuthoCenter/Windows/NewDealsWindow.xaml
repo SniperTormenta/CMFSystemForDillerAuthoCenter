@@ -28,7 +28,7 @@
                             <TextBlock Text="Почта" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="50">
+                    <ListViewItem x:Name="Gotomainmenu" Height="50" >
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <TextBlock Text="Главная" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
@@ -101,8 +101,8 @@
                 <TextBlock Text="Переключение вида" FontSize="24" FontWeight="Bold" Margin="0,0,30,0" VerticalAlignment="Center"/>
                 <ToggleButton x:Name="ViewToggleButton" 
                               Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                              Width="140" 
-                              Height="60" 
+                              Width="118" 
+                              Height="50" 
                               FontSize="11" 
                               Padding="9" 
                               Checked="ViewToggleButton_Checked" 

@@ -1,4 +1,5 @@
-﻿using CMFSystemForDillerAuthoCenter.Windows;
+﻿using CMFSystemForDillerAuthoCenter.CallWindow;
+using CMFSystemForDillerAuthoCenter.Windows;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,134 +22,149 @@ namespace CMFSystemForDillerAuthoCenter
 {
     public partial class MainWindow : Window
     {
-        private OrderData orderData;
-        private const string JsonFilePath = "orders.json";
+        private List<Deal> appeals;
+        private List<Deal> orders;
+
+        public List<Deal> Appeals
+        {
+            get { return appeals; }
+            set { appeals = value; }
+        }
+
+        public List<Deal> Orders
+        {
+            get { return orders; }
+            set { orders = value; }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
             LoadData();
-            DataContext = orderData;
+            DataContext = this;
         }
 
         private void LoadData()
         {
-            try
+            DataStorage.LoadDeals();
+            DataStorage.LoadCars();
+
+            var deals = DataStorage.DealData.Deals;
+            appeals = deals.Where(d => d.Type == "Обращение").ToList();
+            orders = deals.Where(d => d.Type == "Заказ").Select(d => new Deal
             {
-                if (File.Exists(JsonFilePath))
-                {
-                    string json = File.ReadAllText(JsonFilePath);
-                    orderData = JsonConvert.DeserializeObject<OrderData>(json);
-                }
-                else
-                {
-                    orderData = new OrderData
-                    {
-                        Orders = new List<Order>
-                        {
-                            new Order
-                            {
-                                Id = "C2-002345 29.01.2023 06:32",
-                                Title = "LADA VESTA CROSS WAG...",
-                                Status = "Тест-драйв, ООГ",
-                                Date = new DateTime(2023, 1, 29, 6, 32, 0),
-                                CarModel = "HYUNDAI CRETA II",
-                                Price = 2895056,
-                                ClientPhone = "+7 (912) 345 67 89",
-                                ClientName = "Иванов Иван Иванович",
-                                Source = "SMS",
-                            },
-                            new Order
-                            {
-                                Id = "C3-002346 17.01.2023 14:02",
-                                Title = "SKODA OCTAVIA",
-                                Status = "В работе Сергеева",
-                                Date = new DateTime(2023, 1, 17, 14, 2, 0),
-                                CarModel = "KIA SPORTAGE",
-                                Price = 580000,
-                                ClientPhone = "+7 (900) 195 48 82",
-                                ClientName = "Петров Петр Петрович",
-                                Source = "Звонок",
-                            },
-                            new Order
-                            {
-                                Id = "C2-002319 18.01.2023 19:00",
-                                Title = "NISSAN X-TRAIL",
-                                Status = "Тест-драйв, ООГ",
-                                Date = new DateTime(2023, 1, 18, 19, 0, 0),
-                                CarModel = "MERCEDES-BENZ B180",
-                                Price = 5581056,
-                                ClientPhone = "+7 (912) 345 67 89",
-                                ClientName = "Сидоров Сидор Сидорович",
-                                Source = "SMS",
-                            },
-                            new Order
-                            {
-                                Id = "C3-002326 28.01.2023 12:45",
-                                Title = "NISSAN QASHQAI",
-                                Status = "Кредитование, ИП",
-                                Date = new DateTime(2023, 1, 28, 12, 45, 0),
-                                CarModel = "TOYOTA CAMRY",
-                                Price = 4037757,
-                                ClientPhone = "+7 (912) 345 67 89",
-                                ClientName = "Иванов Иван Иванович",
-                                Source = "KM",
-                            },
-                            new Order
-                            {
-                                Id = "C3-002349 22.01.2023 14:15",
-                                Title = "MERCEDES-BENZ B180",
-                                Status = "Интерес, уточнял по наличию и комплектации",
-                                Date = new DateTime(2023, 1, 22, 14, 15, 0),
-                                CarModel = "LADA LARGUS",
-                                Price = 206500,
-                                ClientPhone = "+7 (906) 927-77-12",
-                                ClientName = "Михаил Дмитриев Николаевич, ИП",
-                                Source = "KM",
-                            }
-                        }
-                    };
-                    SaveData();
-                }
-            }
-            catch (Exception ex)
+                Id = d.Id,
+                Type = d.Type,
+                ClientName = d.ClientName,
+                ClientPhone = d.ClientPhone,
+                ClientEmail = d.ClientEmail,
+                Date = d.Date,
+                Theme = d.Theme,
+                Notes = d.Notes,
+                Status = d.Status,
+                CarId = d.CarId,
+                CarInfo = GetCarInfo(d.CarId),
+                Amount = d.Amount,
+                PaymentTerms = d.PaymentTerms,
+                IsDeliveryRequired = d.IsDeliveryRequired,
+                DeliveryDate = d.DeliveryDate,
+                DeliveryAddress = d.DeliveryAddress
+            }).ToList();
+
+            System.Diagnostics.Debug.WriteLine($"MainWindow: Загружено {appeals.Count} обращений и {orders.Count} заказов.");
+        }
+
+        private string GetCarInfo(string carId)
+        {
+            var car = DataStorage.CarData.Cars.FirstOrDefault(c => c.Id == carId);
+            return car != null ? $"{car.Brand} {car.Model} ({car.Year})" : "Неизвестный автомобиль";
+        }
+
+        private void EditAppealButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is Deal deal)
             {
-                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}");
-                orderData = new OrderData();
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, DataStorage.CarData, deal, "Обращение");
+                editWindow.Owner = this;
+                if (editWindow.ShowDialog() == true)
+                {
+                    LoadData();
+                    AppealsListView.Items.Refresh();
+                }
             }
         }
 
-        private void SaveData()
+        private void EditOrderButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (sender is Button button && button.Tag is Deal deal)
             {
-                string json = JsonConvert.SerializeObject(orderData, Formatting.Indented);
-                File.WriteAllText(JsonFilePath, json);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}");
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, DataStorage.CarData, deal, "Заказ");
+                editWindow.Owner = this;
+                if (editWindow.ShowDialog() == true)
+                {
+                    LoadData();
+                    OrdersListView.Items.Refresh();
+                }
             }
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        private void ViewAppealDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveData();
-            base.OnClosing(e);
+            if (sender is Button button && button.Tag is Deal deal)
+            {
+                string details = $"Обращение #{deal.Id}\n" +
+                                $"Тема: {deal.Theme}\n" +
+                                $"Клиент: {deal.ClientName}\n" +
+                                $"Телефон: {deal.ClientPhone}\n" +
+                                $"Email: {deal.ClientEmail}\n" +
+                                $"Дата: {deal.Date}\n" +
+                                $"Статус: {deal.Status}\n" +
+                                $"Комментарии: {deal.Notes}";
+                MessageBox.Show(details, "Подробности обращения");
+            }
+        }
+
+        private void ViewOrderDetailsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is Deal deal)
+            {
+                string deliveryInfo = deal.IsDeliveryRequired
+                    ? $"\nТребуется доставка: Да\nДата доставки: {deal.DeliveryDate}\nАдрес доставки: {deal.DeliveryAddress}"
+                    : "\nТребуется доставка: Нет";
+                string details = $"Заказ #{deal.Id}\n" +
+                                $"Машина: {GetCarInfo(deal.CarId)}\n" +
+                                $"Клиент: {deal.ClientName}\n" +
+                                $"Телефон: {deal.ClientPhone}\n" +
+                                $"Email: {deal.ClientEmail}\n" +
+                                $"Дата: {deal.Date}\n" +
+                                $"Цена: {deal.Amount}\n" +
+                                $"Условия оплаты: {deal.PaymentTerms}\n" +
+                                $"Статус: {deal.Status}\n" +
+                                $"Комментарии: {deal.Notes}" +
+                                deliveryInfo;
+                MessageBox.Show(details, "Подробности заказа");
+            }
         }
 
         private void SkadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            WarehouseWindow warehouseWindow = new WarehouseWindow();
+            var warehouseWindow = new WarehouseWindow();
             warehouseWindow.Show();
-            this.Close();
+            Close();
+        }
+
+        private void GoToWarehouseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var warehouseWindow = new WarehouseWindow();
+            warehouseWindow.Show();
+            Close();
         }
 
         private void NewDealsButton_Click(object sender, RoutedEventArgs e)
         {
-            var carData = new CarData(); // Загрузите из файла или передайте из другого окна
-            var newDealsWindow = new NewDealsWindow(carData);
+            var newDealsWindow = new NewDealsWindow();
             newDealsWindow.Show();
+            Close();
         }
     }
 }
