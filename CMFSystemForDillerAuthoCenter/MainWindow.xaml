@@ -72,7 +72,8 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="People" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Клиенты" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
+                            <Button x:Name="ClientsButton" Content="Клиенты" Style="{StaticResource MaterialDesignFlatButton}" 
+                Foreground="White" Click="ClientsButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">

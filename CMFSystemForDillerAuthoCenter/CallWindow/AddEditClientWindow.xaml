@@ -1,0 +1,92 @@
+﻿<Window x:Class="CMFSystemForDillerAuthoCenter.CallWindow.AddEditClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="AddEditClientWindow" Height="600" Width="500">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <RadioButton x:Name="IndividualRadioButton" Content="Физлицо" IsChecked="True" GroupName="ClientType" Checked="ClientTypeRadioButton_Checked" Margin="0,0,10,0"/>
+                <RadioButton x:Name="LegalEntityRadioButton" Content="Юрлицо" GroupName="ClientType" Checked="ClientTypeRadioButton_Checked"/>
+            </StackPanel>
+
+            <StackPanel x:Name="IndividualPanel" Grid.Row="1" Margin="0,0,0,10" 
+                        Visibility="{Binding IsIndividual, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBox x:Name="FirstNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Имя"/>
+                <TextBox x:Name="LastNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Фамилия"/>
+                <TextBox x:Name="MiddleNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Отчество"/>
+                <ComboBox x:Name="GenderComboBox" materialDesign:HintAssist.Hint="Пол">
+                    <ComboBoxItem Content="Мужской"/>
+                    <ComboBoxItem Content="Женский"/>
+                </ComboBox>
+            </StackPanel>
+
+            <TextBox x:Name="CompanyNameTextBox" Grid.Row="1" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Название компании" 
+                     Visibility="{Binding IsLegalEntity, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <TextBox x:Name="EmailTextBox" Grid.Row="2" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Email"/>
+            <TextBox x:Name="PhoneTextBox" Grid.Row="3" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Телефон"/>
+
+            <StackPanel Grid.Row="4" Margin="0,0,0,10">
+                <TextBlock Text="Контактные лица:" Margin="0,0,0,5"/>
+                <Button Content="+" Width="30" Click="AddContactPersonButton_Click" HorizontalAlignment="Left"/>
+                <ItemsControl x:Name="ContactPersonsItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5" Padding="5">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding FullName}"/>
+                                    <TextBlock Text="{Binding Phone}"/>
+                                    <TextBlock Text="{Binding Email}"/>
+                                    <TextBlock Text="{Binding Position}"/>
+                                    <TextBlock Text="{Binding Notes}"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <Button Content="Редактировать" Tag="{Binding}" Click="EditContactPersonButton_Click" Margin="0,0,5,0"/>
+                                        <Button Content="Удалить" Tag="{Binding}" Click="DeleteContactPersonButton_Click"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <ComboBox x:Name="CategoryComboBox" Grid.Row="5" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Категория">
+                <ComboBoxItem Content="Клиент"/>
+                <ComboBoxItem Content="Конкурент"/>
+                <ComboBoxItem Content="Партнёр"/>
+            </ComboBox>
+
+            <TextBox x:Name="TagTextBox" Grid.Row="6" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Метка"/>
+
+            <TextBox x:Name="NotesTextBox" Grid.Row="7" Margin="0,0,0,10" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Заметки"/>
+
+            <ComboBox x:Name="ResponsibleComboBox" Grid.Row="8" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Ответственный"/>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="9" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button Content="Сохранить" Click="SaveButton_Click" Margin="0,0,10,0"/>
+                <Button Content="Отмена" Click="CancelButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Window>

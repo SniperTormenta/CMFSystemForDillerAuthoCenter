@@ -104,8 +104,17 @@
     <Compile Include="CallWindow\AddCarWindow.xaml.cs">
       <DependentUpon>AddCarWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CallWindow\AddContactPersonWindow.xaml.cs">
+      <DependentUpon>AddContactPersonWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallWindow\AddEditClientWindow.xaml.cs">
+      <DependentUpon>AddEditClientWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CallWindow\AddEditDealWindow.xaml.cs">
       <DependentUpon>AddEditDealWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CallWindow\AddEditEmployeeWindow.xaml.cs">
+      <DependentUpon>AddEditEmployeeWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="CallWindow\BulkEmailWindow.xaml.cs">
       <DependentUpon>BulkEmailWindow.xaml</DependentUpon>
@@ -124,13 +133,21 @@
     </Compile>
     <Compile Include="CarBrandData.cs" />
     <Compile Include="CarData.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="DataStorage.cs" />
     <Compile Include="DealData.cs" />
     <Compile Include="EmailMessage.cs" />
     <Compile Include="EmailService.cs" />
-    <Compile Include="WidthToVisibilityConverter.cs" />
+    <Compile Include="Employee.cs" />
+    <Compile Include="InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="Windows\ClientsWindow.xaml.cs">
+      <DependentUpon>ClientsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\EmailWindow.xaml.cs">
       <DependentUpon>EmailWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\EmployeesWindow.xaml.cs">
+      <DependentUpon>EmployeesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\NewDealsWindow.xaml.cs">
       <DependentUpon>NewDealsWindow.xaml</DependentUpon>
@@ -142,7 +159,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CallWindow\AddContactPersonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\AddEditClientWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CallWindow\AddEditDealWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\AddEditEmployeeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -178,7 +207,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\ClientsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\EmailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\EmployeesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
