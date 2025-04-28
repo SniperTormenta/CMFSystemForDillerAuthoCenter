@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,9 +36,41 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            // Проверка обязательных полей
             if (string.IsNullOrWhiteSpace(FullNameTextBox.Text))
             {
-                MessageBox.Show("Укажите ФИО контактного лица.");
+                MessageBox.Show("ФИО контактного лица обязательно для заполнения.");
+                return;
+            }
+
+            // Проверка телефона
+            if (!string.IsNullOrWhiteSpace(PhoneTextBox.Text))
+            {
+                string phone = PhoneTextBox.Text.Replace("+", "").Trim();
+                if (!Regex.IsMatch(phone, @"^\d{11}$"))
+                {
+                    MessageBox.Show("Телефон должен содержать ровно 11 цифр (например, +79991234567 или 79991234567).");
+                    return;
+                }
+            }
+
+            // Проверка Email
+            if (!string.IsNullOrWhiteSpace(EmailTextBox.Text) &&
+                !Regex.IsMatch(EmailTextBox.Text, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
+            {
+                MessageBox.Show("Email должен быть в формате example@domain.com");
+                return;
+            }
+
+            // Проверка длины полей
+            if (FullNameTextBox.Text.Length > 100 ||
+                PositionTextBox.Text.Length > 50 ||
+                NotesTextBox.Text.Length > 500)
+            {
+                MessageBox.Show("Превышена максимальная длина одного из полей:\n" +
+                                "ФИО: до 100 символов\n" +
+                                "Должность: до 50 символов\n" +
+                                "Заметки: до 500 символов");
                 return;
             }
 

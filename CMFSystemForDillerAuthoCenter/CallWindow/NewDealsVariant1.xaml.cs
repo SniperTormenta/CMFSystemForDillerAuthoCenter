@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CMFSystemForDillerAuthoCenter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
     {
         private DealData dealData;
         private CarData carData;
+        private ClientStorage clientStorage; // Добавляем
+        private EmployeeStorage employeeStorage; // Добавляем
         private Action saveAction;
 
         public NewDealsVariant1(DealData dealData, CarData carData, Action saveAction)
@@ -44,6 +47,10 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             // Проверяем carData
             this.carData = carData;
             MessageBox.Show($"NewDealsVariant1: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+
+            // Загружаем ClientStorage и EmployeeStorage
+            this.clientStorage = ClientStorage.Load();
+            this.employeeStorage = EmployeeStorage.Load();
 
             this.saveAction = saveAction;
             InitializeDataGrids();
@@ -103,7 +110,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void AddDealButton_Click(object sender, RoutedEventArgs e)
         {
-            var addDealWindow = new AddEditDealWindow(dealData, carData);
+            var addDealWindow = new AddEditDealWindow(dealData, carData, clientStorage, employeeStorage);
             addDealWindow.Owner = Window.GetWindow(this);
             if (addDealWindow.ShowDialog() == true)
             {
@@ -116,7 +123,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         {
             if (AppealsDataGrid.SelectedItem is Deal selectedDeal)
             {
-                var editDealWindow = new AddEditDealWindow(dealData, carData, selectedDeal);
+                var editDealWindow = new AddEditDealWindow(dealData, carData, clientStorage, employeeStorage, selectedDeal, "Обращение");
                 editDealWindow.Owner = Window.GetWindow(this);
                 editDealWindow.Title = "Редактировать обращение";
                 if (editDealWindow.ShowDialog() == true)
@@ -131,7 +138,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         {
             if (OrdersDataGrid.SelectedItem is Deal selectedDeal)
             {
-                var editDealWindow = new AddEditDealWindow(dealData, carData, selectedDeal);
+                var editDealWindow = new AddEditDealWindow(dealData, carData, clientStorage, employeeStorage, selectedDeal, "Заказ");
                 editDealWindow.Owner = Window.GetWindow(this);
                 editDealWindow.Title = "Редактировать заказ";
                 if (editDealWindow.ShowDialog() == true)

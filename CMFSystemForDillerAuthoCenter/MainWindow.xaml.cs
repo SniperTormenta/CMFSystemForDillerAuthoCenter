@@ -1,5 +1,6 @@
 ﻿using CMFSystemForDillerAuthoCenter.CallWindow;
 using CMFSystemForDillerAuthoCenter.Windows;
+using CMFSystemForDillerAuthoCenter;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace CMFSystemForDillerAuthoCenter
     {
         private List<Deal> appeals;
         private List<Deal> orders;
+        private ClientStorage Client;
+        private EmployeeStorage employeeStorage;
 
         public List<Deal> Appeals
         {
@@ -40,6 +43,8 @@ namespace CMFSystemForDillerAuthoCenter
         public MainWindow()
         {
             InitializeComponent();
+            Client = ClientStorage.Load();
+            employeeStorage = EmployeeStorage.Load(); // Загружаем сотрудников
             LoadData();
             DataContext = this;
         }
@@ -84,7 +89,7 @@ namespace CMFSystemForDillerAuthoCenter
         {
             if (sender is Button button && button.Tag is Deal deal)
             {
-                var editWindow = new AddEditDealWindow(DataStorage.DealData, DataStorage.CarData, deal, "Обращение");
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, Client, employeeStorage, deal);
                 editWindow.Owner = this;
                 if (editWindow.ShowDialog() == true)
                 {
@@ -98,7 +103,7 @@ namespace CMFSystemForDillerAuthoCenter
         {
             if (sender is Button button && button.Tag is Deal deal)
             {
-                var editWindow = new AddEditDealWindow(DataStorage.DealData, DataStorage.CarData, deal, "Заказ");
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, Client, employeeStorage, deal);
                 editWindow.Owner = this;
                 if (editWindow.ShowDialog() == true)
                 {
@@ -172,6 +177,7 @@ namespace CMFSystemForDillerAuthoCenter
             var emailwindow = new EmailWindow();
             emailwindow.Show();
         }
+
         private void ClientsButton_Click(object sender, RoutedEventArgs e)
         {
             var clientsWindow = new ClientsWindow();

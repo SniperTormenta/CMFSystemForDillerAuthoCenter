@@ -14,124 +14,92 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <!-- Первая колонка -->
-        <StackPanel Grid.Column="0" Margin="10">
-            <TextBlock Text="Автомобиль" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="NameTextBox" Margin="0,0,0,10"/>
+        <StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
+            <TextBlock Text="Серия СТС* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="StsSeriesTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Тип авто" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="TypeComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="Легковушка"/>
-                <ComboBoxItem Content="Пикап"/>
-                <ComboBoxItem Content="Микроавтобус"/>
-            </ComboBox>
+            <TextBlock Text="Номер СТС* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="StsNumberTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Категория" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="CategoryComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="B"/>
-                <ComboBoxItem Content="C"/>
-                <ComboBoxItem Content="A"/>
-                <ComboBoxItem Content="D"/>
-            </ComboBox>
+            <TextBlock Text="Госномер автомобиля* " FontSize="14" Margin="0,0,0,5"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBox x:Name="LicensePlateTextBox" Width="100" Margin="0,0,5,0"/>
+                <TextBlock Text="Регион* " FontSize="14" Margin="0,0,5,0"/>
+                <TextBox x:Name="LicensePlateRegionTextBox" Width="50"/>
+            </StackPanel>
 
-            <TextBlock Text="Марка" FontSize="14" Margin="0,0,0,5"/>
+            <TextBlock Text="VIN-номер* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="VinTextBox" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Номер кузова* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="BodyNumberTextBox" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Категория ТС* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="VehicleCategoryTextBox" Margin="0,0,0,10"/>
+
+            <!-- Добавляем поля для Brand и Model -->
+            <TextBlock Text="Марка автомобиля* " FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="BrandTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Модель" FontSize="14" Margin="0,0,0,5"/>
+            <TextBlock Text="Модель автомобиля* " FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="ModelTextBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Год выпуска" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="YearComboBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Тип двигателя" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="EngineComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="Бензин"/>
-                <ComboBoxItem Content="Дизель"/>
-                <ComboBoxItem Content="Гибрид"/>
-                <ComboBoxItem Content="Электрический двигатель"/>
-            </ComboBox>
-
-            <TextBlock Text="Привод" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="DriveComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="Передний"/>
-                <ComboBoxItem Content="Задний"/>
-                <ComboBoxItem Content="Полный привод"/>
-            </ComboBox>
-
-            <TextBlock Text="Тип кузова" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="BodyTypeComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="SUV"/>
-                <ComboBoxItem Content="Кроссовер"/>
-                <ComboBoxItem Content="Седан"/>
-                <ComboBoxItem Content="Хэтчбек"/>
-                <ComboBoxItem Content="Пикап"/>
-                <ComboBoxItem Content="Универсал"/>
-                <ComboBoxItem Content="Купе"/>
-                <ComboBoxItem Content="Кабриолет"/>
-                <ComboBoxItem Content="Минивэн"/>
-                <ComboBoxItem Content="Лимузин"/>
-            </ComboBox>
         </StackPanel>
 
         <!-- Вторая колонка -->
-        <StackPanel Grid.Column="1" Margin="10">
-            <TextBlock Text="Объем двигателя (л)" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="EngineVolumeTextBox" Margin="0,0,0,10"/>
+        <StackPanel Grid.Column="1" Grid.Row="0" Margin="10">
+            <TextBlock Text="Год выпуска* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="YearTextBox" Margin="0,0,0,10"/>
+            <!-- Переименовано из ManufactureYearTextBox -->
 
-            <TextBlock Text="Пробег (км)" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="MileageTextBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Цвет" FontSize="14" Margin="0,0,0,5"/>
+            <TextBlock Text="Цвет автомобиля* " FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="ColorTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Руль" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="SteeringWheelComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="Слева"/>
-                <ComboBoxItem Content="Справа"/>
-            </ComboBox>
+            <TextBlock Text="Мощность двигателя (л.с.)* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="EnginePowerTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Салон" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="InteriorTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="Экологический класс* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="EnvironmentalClassTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Срок владения" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="OwnershipDurationTextBox" Margin="0,0,0,10"/>
+            <TextBlock Text="Серия ПТС* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="PtsSeriesTextBox" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Количество владельцев" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="OwnerCountTextBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Состояние" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="ConditionTextBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Цена" FontSize="14" Margin="0,0,0,5"/>
-            <TextBox x:Name="PriceTextBox" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Статус" FontSize="14" Margin="0,0,0,5"/>
-            <ComboBox x:Name="StatusComboBox" Margin="0,0,0,10">
-                <ComboBoxItem Content="В продаже"/>
-                <ComboBoxItem Content="Не доступна для продажи"/>
-                <ComboBoxItem Content="Продана"/>
-            </ComboBox>
+            <TextBlock Text="Номер ПТС* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="PtsNumberTextBox" Margin="0,0,0,10"/>
         </StackPanel>
 
         <!-- Третья колонка -->
-        <Grid Grid.Column="2" Margin="10">
+        <Grid Grid.Column="2" Grid.Row="0" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <TextBlock Text="Заметки" FontSize="14" Margin="0,0,0,5"/>
-                <TextBox x:Name="NotesTextBox" Height="100" AcceptsReturn="True" Margin="0,0,0,10"/>
+                <TextBlock Text="Фамилия владельца* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="OwnerLastNameTextBox" Margin="0,0,0,10"/>
 
-                <TextBlock Text="Последний владелец" FontSize="14" Margin="0,0,0,5"/>
-                <TextBox x:Name="LastOwnerTextBox" Margin="0,0,0,10"/>
+                <TextBlock Text="Имя владельца* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="OwnerFirstNameTextBox" Margin="0,0,0,10"/>
 
-                <TextBlock Text="Код владельца" FontSize="14" Margin="0,0,0,5"/>
-                <TextBox x:Name="OwnerCodeTextBox" Margin="0,0,0,10"/>
+                <TextBlock Text="Отчество владельца* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="OwnerMiddleNameTextBox" Margin="0,0,0,10"/>
 
-                <TextBlock Text="Код площадки" FontSize="14" Margin="0,0,0,5"/>
+                <TextBlock Text="Адрес прописки* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="OwnerAddressTextBox" Height="50" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Разрешённая максимальная масса (кг)* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="MaxPermittedWeightTextBox" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Масса без нагрузки (кг)* " FontSize="14" Margin="0,0,0,5"/>
+                <TextBox x:Name="UnladenWeightTextBox" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Код площадки* " FontSize="14" Margin="0,0,0,5"/>
                 <TextBox x:Name="LocationCodeTextBox" Margin="0,0,0,10"/>
             </StackPanel>
 
@@ -145,5 +113,9 @@
                         Click="SaveButton_Click" Margin="0,0,0,10"/>
             </StackPanel>
         </Grid>
+
+        <!-- Пояснение про обязательные поля -->
+        <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Text="* — поля, обязательные для заполнения" 
+                   FontSize="10" Foreground="Gray" Margin="10,0,0,10"/>
     </Grid>
 </Window>

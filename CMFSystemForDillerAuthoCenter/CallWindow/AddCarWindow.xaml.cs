@@ -22,82 +22,64 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 {
     public partial class AddCarWindow : Window
     {
-        private CarData carData;
-        private Car car;
+        private Car _car;
 
-        public AddCarWindow(CarData carData, Car carToEdit = null)
+        public AddCarWindow(Car carToEdit = null)
         {
             InitializeComponent();
-            this.carData = DataStorage.CarData;
-            this.car = carToEdit ?? new Car { Id = $"C{(carData?.Cars?.Count ?? 0) + 1:D03}" };
+            // Загружаем данные автомобилей при открытии окна
+            DataStorage.LoadCars();
 
-            InitializeForm();
+            _car = carToEdit ?? new Car
+            {
+                Id = $"CARD{(DataStorage.CarData.Cars.Count + 1):D03}",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
 
             if (carToEdit != null)
             {
-                PopulateFields();
-            }
-        }
+                StsSeriesTextBox.Text = carToEdit.StsSeries;
+                StsNumberTextBox.Text = carToEdit.StsNumber;
+                OwnerLastNameTextBox.Text = carToEdit.OwnerLastName;
+                OwnerFirstNameTextBox.Text = carToEdit.OwnerFirstName;
+                OwnerMiddleNameTextBox.Text = carToEdit.OwnerMiddleName;
+                OwnerAddressTextBox.Text = carToEdit.OwnerAddress;
+                LicensePlateTextBox.Text = carToEdit.LicensePlate;
+                LicensePlateRegionTextBox.Text = carToEdit.LicensePlateRegion;
+                VinTextBox.Text = carToEdit.Vin;
+                BodyNumberTextBox.Text = carToEdit.BodyNumber;
+                VehicleCategoryTextBox.Text = carToEdit.VehicleCategory;
+                YearTextBox.Text = carToEdit.Year.ToString();
+                ColorTextBox.Text = carToEdit.Color;
+                EnginePowerTextBox.Text = carToEdit.EnginePower;
+                EnvironmentalClassTextBox.Text = carToEdit.EnvironmentalClass;
+                MaxPermittedWeightTextBox.Text = carToEdit.MaxPermittedWeight;
+                UnladenWeightTextBox.Text = carToEdit.UnladenWeight;
+                PtsSeriesTextBox.Text = carToEdit.PtsSeries;
+                PtsNumberTextBox.Text = carToEdit.PtsNumber;
+                LocationCodeTextBox.Text = carToEdit.SiteCode;
+                BrandTextBox.Text = carToEdit.Brand;
+                ModelTextBox.Text = carToEdit.Model;
 
-        private void InitializeForm()
-        {
-            for (int year = DateTime.Now.Year; year >= 1900; year--)
-            {
-                YearComboBox.Items.Add(year);
-            }
-        }
-
-        private void PopulateFields()
-        {
-            NameTextBox.Text = car.Name;
-            TypeComboBox.SelectedItem = TypeComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.Type);
-            CategoryComboBox.SelectedItem = CategoryComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.Category);
-            BrandTextBox.Text = car.Brand;
-            ModelTextBox.Text = car.Model;
-            YearComboBox.SelectedItem = car.Year;
-            EngineComboBox.SelectedItem = EngineComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.Engine);
-            DriveComboBox.SelectedItem = DriveComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.Drive);
-            BodyTypeComboBox.SelectedItem = BodyTypeComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.BodyType);
-            EngineVolumeTextBox.Text = car.EngineVolume.ToString();
-            MileageTextBox.Text = car.Mileage.ToString();
-            ColorTextBox.Text = car.Color;
-            SteeringWheelComboBox.SelectedItem = SteeringWheelComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.SteeringWheel);
-            InteriorTextBox.Text = car.Interior;
-            OwnershipDurationTextBox.Text = car.OwnershipDuration;
-            OwnerCountTextBox.Text = car.OwnerCount.ToString();
-            ConditionTextBox.Text = car.Condition;
-            PriceTextBox.Text = car.Price.ToString();
-            StatusComboBox.SelectedItem = StatusComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == car.Status);
-            NotesTextBox.Text = car.Notes;
-            LastOwnerTextBox.Text = car.LastOwner;
-            OwnerCodeTextBox.Text = car.OwnerCode;
-            LocationCodeTextBox.Text = car.LocationCode;
-
-            if (!string.IsNullOrEmpty(car.PhotoPath))
-            {
-                try
+                // Загружаем фотографию, если она есть
+                if (!string.IsNullOrEmpty(carToEdit.PhotoPath))
                 {
-                    string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                    string absolutePath = Path.Combine(basePath, car.PhotoPath);
-                    CarPhotoImage.Source = new BitmapImage(new Uri(absolutePath, UriKind.Absolute));
-                }
-                catch
-                {
-                    CarPhotoImage.Source = null;
+                    try
+                    {
+                        CarPhotoImage.Source = new BitmapImage(new Uri(carToEdit.PhotoPath));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при загрузке существующей фотографии: {ex.Message}");
+                    }
                 }
             }
         }
 
         private void LoadPhotoButton_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png"
             };
@@ -106,100 +88,234 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             {
                 try
                 {
-                    string fileName = Path.GetFileName(openFileDialog.FileName);
-                    string destinationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-                    File.Copy(openFileDialog.FileName, destinationPath, true);
-                    CarPhotoImage.Source = new BitmapImage(new Uri(destinationPath, UriKind.Absolute));
-                    car.PhotoPath = Path.Combine("Images", fileName);
+                    string photoPath = openFileDialog.FileName;
+                    CarPhotoImage.Source = new BitmapImage(new Uri(photoPath));
+                    _car.PhotoPath = photoPath; // Сохраняем путь к фотографии
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при загрузке изображения: {ex.Message}");
-                    CarPhotoImage.Source = null;
+                    MessageBox.Show($"Ошибка при загрузке фото: {ex.Message}");
                 }
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            // Проверка на заполненность всех обязательных полей
+            if (string.IsNullOrWhiteSpace(StsSeriesTextBox.Text) ||
+                string.IsNullOrWhiteSpace(StsNumberTextBox.Text) ||
+                string.IsNullOrWhiteSpace(OwnerLastNameTextBox.Text) ||
+                string.IsNullOrWhiteSpace(OwnerFirstNameTextBox.Text) ||
+                string.IsNullOrWhiteSpace(OwnerMiddleNameTextBox.Text) ||
+                string.IsNullOrWhiteSpace(OwnerAddressTextBox.Text) ||
+                string.IsNullOrWhiteSpace(LicensePlateTextBox.Text) ||
+                string.IsNullOrWhiteSpace(LicensePlateRegionTextBox.Text) ||
+                string.IsNullOrWhiteSpace(VinTextBox.Text) ||
+                string.IsNullOrWhiteSpace(BodyNumberTextBox.Text) ||
+                string.IsNullOrWhiteSpace(VehicleCategoryTextBox.Text) ||
+                string.IsNullOrWhiteSpace(YearTextBox.Text) ||
+                string.IsNullOrWhiteSpace(ColorTextBox.Text) ||
+                string.IsNullOrWhiteSpace(EnginePowerTextBox.Text) ||
+                string.IsNullOrWhiteSpace(EnvironmentalClassTextBox.Text) ||
+                string.IsNullOrWhiteSpace(MaxPermittedWeightTextBox.Text) ||
+                string.IsNullOrWhiteSpace(UnladenWeightTextBox.Text) ||
+                string.IsNullOrWhiteSpace(PtsSeriesTextBox.Text) ||
+                string.IsNullOrWhiteSpace(PtsNumberTextBox.Text) ||
+                string.IsNullOrWhiteSpace(LocationCodeTextBox.Text) ||
+                string.IsNullOrWhiteSpace(BrandTextBox.Text) ||
+                string.IsNullOrWhiteSpace(ModelTextBox.Text))
             {
-                if (string.IsNullOrWhiteSpace(BrandTextBox.Text))
-                {
-                    MessageBox.Show("Пожалуйста, укажите марку автомобиля.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(ModelTextBox.Text))
-                {
-                    MessageBox.Show("Пожалуйста, укажите модель автомобиля.");
-                    return;
-                }
-
-                if (YearComboBox.SelectedItem == null)
-                {
-                    MessageBox.Show("Пожалуйста, выберите год выпуска.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(PriceTextBox.Text) || !decimal.TryParse(PriceTextBox.Text, out decimal price))
-                {
-                    MessageBox.Show("Пожалуйста, укажите корректную цену.");
-                    return;
-                }
-
-                car.Name = NameTextBox.Text;
-                car.Type = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.Category = (CategoryComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.Brand = BrandTextBox.Text;
-                car.Model = ModelTextBox.Text;
-                car.Year = YearComboBox.SelectedItem != null ? Convert.ToInt32(YearComboBox.SelectedItem) : 0;
-                car.Engine = (EngineComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.Drive = (DriveComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.BodyType = (BodyTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.EngineVolume = double.TryParse(EngineVolumeTextBox.Text, out double engineVolume) ? engineVolume : 0;
-                car.Mileage = int.TryParse(MileageTextBox.Text, out int mileage) ? mileage : 0;
-                car.Color = ColorTextBox.Text;
-                car.SteeringWheel = (SteeringWheelComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.Interior = InteriorTextBox.Text;
-                car.OwnershipDuration = OwnershipDurationTextBox.Text;
-                car.OwnerCount = int.TryParse(OwnerCountTextBox.Text, out int ownerCount) ? ownerCount : 0;
-                car.Condition = ConditionTextBox.Text;
-                car.Price = price;
-                car.Status = (StatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                car.Notes = NotesTextBox.Text;
-                car.LastOwner = LastOwnerTextBox.Text;
-                car.OwnerCode = OwnerCodeTextBox.Text;
-                car.LocationCode = LocationCodeTextBox.Text;
-
-                if (!carData.Cars.Contains(car))
-                {
-                    carData.Cars.Add(car);
-                }
-
-                DataStorage.SaveCars();
-
-                System.Diagnostics.Debug.WriteLine($"AddCarWindow: После сохранения carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
-
-                DialogResult = true;
-                Close();
+                MessageBox.Show("Заполните все обязательные поля.");
+                return;
             }
-            catch (Exception ex)
+
+            // 1. Серия СТС: 2–3 символа (буквы или цифры)
+            if (!Regex.IsMatch(StsSeriesTextBox.Text, @"^[A-Za-zА-Яа-я0-9]{2,3}$"))
             {
-                MessageBox.Show($"Ошибка при сохранении: {ex.Message}");
+                MessageBox.Show("Серия СТС должна содержать 2–3 символа (буквы или цифры).");
+                return;
             }
+
+            // 2. Номер СТС: 6–7 цифр
+            if (!Regex.IsMatch(StsNumberTextBox.Text, @"^\d{6,7}$"))
+            {
+                MessageBox.Show("Номер СТС должен содержать 6–7 цифр.");
+                return;
+            }
+
+            // 3. Фамилия владельца: до 50 символов
+            if (OwnerLastNameTextBox.Text.Length > 50)
+            {
+                MessageBox.Show("Фамилия владельца не должна превышать 50 символов.");
+                return;
+            }
+
+            // 4. Имя владельца: до 50 символов
+            if (OwnerFirstNameTextBox.Text.Length > 50)
+            {
+                MessageBox.Show("Имя владельца не должно превышать 50 символов.");
+                return;
+            }
+
+            // 5. Отчество владельца: до 50 символов
+            if (OwnerMiddleNameTextBox.Text.Length > 50)
+            {
+                MessageBox.Show("Отчество владельца не должно превышать 50 символов.");
+                return;
+            }
+
+            // 6. Адрес прописки: до 200 символов
+            if (OwnerAddressTextBox.Text.Length > 200)
+            {
+                MessageBox.Show("Адрес прописки не должен превышать 200 символов.");
+                return;
+            }
+
+            // 7. Госномер автомобиля (без региона): 6 символов (буквы и цифры)
+            if (!Regex.IsMatch(LicensePlateTextBox.Text, @"^[A-Za-zА-Яа-я0-9]{6}$"))
+            {
+                MessageBox.Show("Госномер автомобиля должен содержать ровно 6 символов (буквы и цифры).");
+                return;
+            }
+
+            // 8. Регион номера: 2–3 цифры
+            if (!Regex.IsMatch(LicensePlateRegionTextBox.Text, @"^\d{2,3}$"))
+            {
+                MessageBox.Show("Регион номера должен содержать 2–3 цифры.");
+                return;
+            }
+
+            // 9. VIN-номер: 17 символов (цифры и латинские буквы)
+            if (!Regex.IsMatch(VinTextBox.Text, @"^[A-Za-z0-9]{17}$"))
+            {
+                MessageBox.Show("VIN-номер должен содержать ровно 17 символов (цифры и латинские буквы).");
+                return;
+            }
+
+            // 10. Номер кузова: до 20 символов
+            if (BodyNumberTextBox.Text.Length > 20)
+            {
+                MessageBox.Show("Номер кузова не должен превышать 20 символов.");
+                return;
+            }
+
+            // 11. Категория ТС: 1–2 символа
+            if (!Regex.IsMatch(VehicleCategoryTextBox.Text, @"^[A-Za-z]{1,2}$"))
+            {
+                MessageBox.Show("Категория ТС должна содержать 1–2 символа (латинские буквы).");
+                return;
+            }
+
+            // 12. Год выпуска: 4 цифры
+            if (!int.TryParse(YearTextBox.Text, out int year) ||
+                year < 1900 || year > DateTime.Now.Year + 1)
+            {
+                MessageBox.Show("Год выпуска должен быть 4-значным числом в диапазоне от 1900 до текущего года + 1.");
+                return;
+            }
+
+            // 13. Цвет автомобиля: до 20 символов
+            if (ColorTextBox.Text.Length > 20)
+            {
+                MessageBox.Show("Цвет автомобиля не должен превышать 20 символов.");
+                return;
+            }
+
+            // 14. Мощность двигателя: до 10 символов
+            if (EnginePowerTextBox.Text.Length > 10)
+            {
+                MessageBox.Show("Мощность двигателя не должна превышать 10 символов.");
+                return;
+            }
+
+            // 15. Экологический класс: до 10 символов
+            if (EnvironmentalClassTextBox.Text.Length > 10)
+            {
+                MessageBox.Show("Экологический класс не должен превышать 10 символов.");
+                return;
+            }
+
+            // 16. Разрешённая максимальная масса: до 10 символов
+            if (MaxPermittedWeightTextBox.Text.Length > 10)
+            {
+                MessageBox.Show("Разрешённая максимальная масса не должна превышать 10 символов.");
+                return;
+            }
+
+            // 17. Масса без нагрузки: до 10 символов
+            if (UnladenWeightTextBox.Text.Length > 10)
+            {
+                MessageBox.Show("Масса без нагрузки не должна превышать 10 символов.");
+                return;
+            }
+
+            // 18. Серия ПТС: 2–4 символа (буквы и цифры)
+            if (!Regex.IsMatch(PtsSeriesTextBox.Text, @"^[A-Za-zА-Яа-я0-9]{2,4}$"))
+            {
+                MessageBox.Show("Серия ПТС должна содержать 2–4 символа (буквы или цифры).");
+                return;
+            }
+
+            // 19. Номер ПТС: 6–8 цифр
+            if (!Regex.IsMatch(PtsNumberTextBox.Text, @"^\d{6,8}$"))
+            {
+                MessageBox.Show("Номер ПТС должен содержать 6–8 цифр.");
+                return;
+            }
+
+            // Дополнительные проверки для Brand и Model (до 50 символов)
+            if (BrandTextBox.Text.Length > 50)
+            {
+                MessageBox.Show("Марка автомобиля не должна превышать 50 символов.");
+                return;
+            }
+
+            if (ModelTextBox.Text.Length > 50)
+            {
+                MessageBox.Show("Модель автомобиля не должна превышать 50 символов.");
+                return;
+            }
+
+            // Сохранение данных
+            _car.StsSeries = StsSeriesTextBox.Text;
+            _car.StsNumber = StsNumberTextBox.Text;
+            _car.OwnerLastName = OwnerLastNameTextBox.Text;
+            _car.OwnerFirstName = OwnerFirstNameTextBox.Text;
+            _car.OwnerMiddleName = OwnerMiddleNameTextBox.Text;
+            _car.OwnerAddress = OwnerAddressTextBox.Text;
+            _car.LicensePlate = LicensePlateTextBox.Text;
+            _car.LicensePlateRegion = LicensePlateRegionTextBox.Text;
+            _car.Vin = VinTextBox.Text;
+            _car.BodyNumber = BodyNumberTextBox.Text;
+            _car.VehicleCategory = VehicleCategoryTextBox.Text;
+            _car.Year = year;
+            _car.Color = ColorTextBox.Text;
+            _car.EnginePower = EnginePowerTextBox.Text;
+            _car.EnvironmentalClass = EnvironmentalClassTextBox.Text;
+            _car.MaxPermittedWeight = MaxPermittedWeightTextBox.Text;
+            _car.UnladenWeight = UnladenWeightTextBox.Text;
+            _car.PtsSeries = PtsSeriesTextBox.Text;
+            _car.PtsNumber = PtsNumberTextBox.Text;
+            _car.SiteCode = LocationCodeTextBox.Text;
+            _car.Brand = BrandTextBox.Text;
+            _car.Model = ModelTextBox.Text;
+            // PhotoPath уже установлен в LoadPhotoButton_Click
+            _car.ModifiedDate = DateTime.Now;
+
+            if (!DataStorage.CarData.Cars.Contains(_car))
+            {
+                DataStorage.CarData.Cars.Add(_car);
+            }
+
+            DataStorage.SaveCars();
+            DialogResult = true;
+            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
-        }
-
-        private void NumberTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !Regex.IsMatch(e.Text, @"^[0-9]+(\.[0-9]+)?$");
         }
     }
 }

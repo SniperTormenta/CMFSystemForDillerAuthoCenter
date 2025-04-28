@@ -20,26 +20,23 @@ namespace CMFSystemForDillerAuthoCenter.Windows
 {
     public partial class WarehouseWindow : Window
     {
-        private CarData carData;
-
         public WarehouseWindow()
         {
             InitializeComponent();
             DataStorage.LoadCars();
-            carData = DataStorage.CarData;
-            CarsDataGrid.ItemsSource = carData?.Cars;
-            System.Diagnostics.Debug.WriteLine($"WarehouseWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+            CarsDataGrid.ItemsSource = DataStorage.CarData.Cars; // Используем DataStorage напрямую
+            System.Diagnostics.Debug.WriteLine($"WarehouseWindow: DataStorage.CarData содержит {DataStorage.CarData.Cars.Count} автомобилей.");
         }
 
         private void AddCarButton_Click(object sender, RoutedEventArgs e)
         {
-            var addCarWindow = new AddCarWindow(carData);
+            var addCarWindow = new AddCarWindow(); // Больше не передаём carData
             addCarWindow.Owner = this;
             if (addCarWindow.ShowDialog() == true)
             {
                 CarsDataGrid.ItemsSource = null;
-                CarsDataGrid.ItemsSource = carData?.Cars;
-                System.Diagnostics.Debug.WriteLine($"После добавления: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
+                CarsDataGrid.ItemsSource = DataStorage.CarData.Cars;
+                System.Diagnostics.Debug.WriteLine($"После добавления: DataStorage.CarData содержит {DataStorage.CarData.Cars.Count} автомобилей.");
             }
         }
 
@@ -47,13 +44,13 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         {
             if (CarsDataGrid.SelectedItem is Car selectedCar)
             {
-                var editCarWindow = new AddCarWindow(carData, selectedCar);
+                var editCarWindow = new AddCarWindow(selectedCar); // Больше не передаём carData
                 editCarWindow.Owner = this;
                 editCarWindow.Title = "Редактировать автомобиль";
                 if (editCarWindow.ShowDialog() == true)
                 {
                     CarsDataGrid.ItemsSource = null;
-                    CarsDataGrid.ItemsSource = carData?.Cars;
+                    CarsDataGrid.ItemsSource = DataStorage.CarData.Cars;
                 }
             }
             else
@@ -66,13 +63,13 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         {
             if (CarsDataGrid.SelectedItem is Car selectedCar)
             {
-                var editCarWindow = new AddCarWindow(carData, selectedCar);
+                var editCarWindow = new AddCarWindow(selectedCar); // Больше не передаём carData
                 editCarWindow.Owner = this;
                 editCarWindow.Title = "Редактировать автомобиль";
                 if (editCarWindow.ShowDialog() == true)
                 {
                     CarsDataGrid.ItemsSource = null;
-                    CarsDataGrid.ItemsSource = carData?.Cars;
+                    CarsDataGrid.ItemsSource = DataStorage.CarData.Cars;
                 }
             }
         }
@@ -86,7 +83,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
 
         private void OpenNewDealsWindow_Click(object sender, RoutedEventArgs e)
         {
-            var newDealsWindow = new NewDealsWindow(carData);
+            var newDealsWindow = new NewDealsWindow(); // Предполагаем, что NewDealsWindow также работает с DataStorage
             newDealsWindow.Show();
         }
 

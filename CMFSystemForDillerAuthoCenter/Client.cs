@@ -16,7 +16,6 @@ namespace CMFSystemForDillerAuthoCenter
         public string Position { get; set; }
         public string Notes { get; set; }
     }
-
     public class Client
     {
         public string Id { get; set; }
@@ -28,7 +27,7 @@ namespace CMFSystemForDillerAuthoCenter
         public string CompanyName { get; set; } // Для Юрлица
         public string Email { get; set; }
         public string Phone { get; set; }
-        public List<ContactPerson> ContactPersons { get; set; } = new List<ContactPerson>();
+        public List<ContactPerson> ContactPersons { get; set; } = new List<ContactPerson>(); // Только для Юрлица
         public string Category { get; set; } // Клиент, Конкурент, Партнёр
         public string Tag { get; set; } // Метка для фильтрации
         public string Notes { get; set; }

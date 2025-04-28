@@ -4,89 +4,112 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
+        xmlns:converters="clr-namespace:CMFSystemForDillerAuthoCenter.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="AddEditClientWindow" Height="600" Width="500">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
     </Window.Resources>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <RadioButton x:Name="IndividualRadioButton" Content="Физлицо" IsChecked="True" GroupName="ClientType" Checked="ClientTypeRadioButton_Checked" Margin="0,0,10,0"/>
-                <RadioButton x:Name="LegalEntityRadioButton" Content="Юрлицо" GroupName="ClientType" Checked="ClientTypeRadioButton_Checked"/>
-            </StackPanel>
+        <!-- Тип клиента -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <RadioButton x:Name="IndividualRadioButton" Content="Физлицо" IsChecked="True" Checked="ClientTypeRadioButton_Checked" Margin="0,0,10,0"/>
+            <RadioButton x:Name="LegalEntityRadioButton" Content="Юрлицо" Checked="ClientTypeRadioButton_Checked"/>
+        </StackPanel>
 
-            <StackPanel x:Name="IndividualPanel" Grid.Row="1" Margin="0,0,0,10" 
-                        Visibility="{Binding IsIndividual, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBox x:Name="FirstNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Имя"/>
-                <TextBox x:Name="LastNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Фамилия"/>
-                <TextBox x:Name="MiddleNameTextBox" Margin="0,0,0,5" materialDesign:HintAssist.Hint="Отчество"/>
-                <ComboBox x:Name="GenderComboBox" materialDesign:HintAssist.Hint="Пол">
-                    <ComboBoxItem Content="Мужской"/>
-                    <ComboBoxItem Content="Женский"/>
-                </ComboBox>
-            </StackPanel>
+        <!-- Поля для физлица -->
+        <StackPanel Grid.Row="1" Visibility="{Binding IsIndividual, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+            <TextBlock Text="Имя* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="FirstNameTextBox" Margin="0,0,0,5"/>
+            <TextBlock Text="Фамилия* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="LastNameTextBox" Margin="0,0,0,5"/>
+            <TextBlock Text="Отчество " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="MiddleNameTextBox" Margin="0,0,0,5"/>
+            <TextBlock Text="Пол " FontSize="14" Margin="0,0,0,5"/>
+            <ComboBox x:Name="GenderComboBox" Margin="0,0,0,5">
+                <ComboBoxItem Content="Мужской"/>
+                <ComboBoxItem Content="Женский"/>
+            </ComboBox>
+        </StackPanel>
 
-            <TextBox x:Name="CompanyNameTextBox" Grid.Row="1" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Название компании" 
-                     Visibility="{Binding IsLegalEntity, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <!-- Поля для юрлица -->
+        <StackPanel Grid.Row="2" Visibility="{Binding IsLegalEntity, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+            <TextBlock Text="Название компании* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="CompanyNameTextBox" Margin="0,0,0,5"/>
+        </StackPanel>
 
-            <TextBox x:Name="EmailTextBox" Grid.Row="2" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Email"/>
-            <TextBox x:Name="PhoneTextBox" Grid.Row="3" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Телефон"/>
+        <!-- Контактные лица (только для юрлица) -->
+        <StackPanel Grid.Row="3" Visibility="{Binding IsLegalEntity, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+            <TextBlock Text="Контактные лица" FontSize="14" Margin="0,0,0,5"/>
+            <Button x:Name="AddContactPersonButton" Content="Добавить контактное лицо" Click="AddContactPersonButton_Click" Margin="0,0,0,5"/>
+            <ItemsControl x:Name="ContactPersonsItemsControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="{Binding FullName}" Width="150"/>
+                            <Button Content="Редактировать" Tag="{Binding}" Click="EditContactPersonButton_Click" Margin="5,0"/>
+                            <Button Content="Удалить" Tag="{Binding}" Click="DeleteContactPersonButton_Click"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
-            <StackPanel Grid.Row="4" Margin="0,0,0,10">
-                <TextBlock Text="Контактные лица:" Margin="0,0,0,5"/>
-                <Button Content="+" Width="30" Click="AddContactPersonButton_Click" HorizontalAlignment="Left"/>
-                <ItemsControl x:Name="ContactPersonsItemsControl">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="LightGray" BorderThickness="1" Margin="0,5" Padding="5">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding FullName}"/>
-                                    <TextBlock Text="{Binding Phone}"/>
-                                    <TextBlock Text="{Binding Email}"/>
-                                    <TextBlock Text="{Binding Position}"/>
-                                    <TextBlock Text="{Binding Notes}"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                        <Button Content="Редактировать" Tag="{Binding}" Click="EditContactPersonButton_Click" Margin="0,0,5,0"/>
-                                        <Button Content="Удалить" Tag="{Binding}" Click="DeleteContactPersonButton_Click"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+        <!-- Общие поля -->
+        <StackPanel Grid.Row="4" Margin="0,0,0,10">
+            <TextBlock Text="Email* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="EmailTextBox" Margin="0,0,0,5"/>
+        </StackPanel>
 
-            <ComboBox x:Name="CategoryComboBox" Grid.Row="5" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Категория">
+        <StackPanel Grid.Row="5" Margin="0,0,0,10">
+            <TextBlock Text="Телефон* " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="PhoneTextBox" Margin="0,0,0,5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Margin="0,0,0,10">
+            <TextBlock Text="Категория* " FontSize="14" Margin="0,0,0,5"/>
+            <ComboBox x:Name="CategoryComboBox" Margin="0,0,0,5">
                 <ComboBoxItem Content="Клиент"/>
                 <ComboBoxItem Content="Конкурент"/>
                 <ComboBoxItem Content="Партнёр"/>
             </ComboBox>
+        </StackPanel>
 
-            <TextBox x:Name="TagTextBox" Grid.Row="6" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Метка"/>
+        <StackPanel Grid.Row="7" Margin="0,0,0,10">
+            <TextBlock Text="Метка " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="TagTextBox" Margin="0,0,0,5"/>
+        </StackPanel>
 
-            <TextBox x:Name="NotesTextBox" Grid.Row="7" Margin="0,0,0,10" AcceptsReturn="True" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Заметки"/>
+        <StackPanel Grid.Row="8" Margin="0,0,0,10">
+            <TextBlock Text="Заметки " FontSize="14" Margin="0,0,0,5"/>
+            <TextBox x:Name="NotesTextBox" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,5"/>
+        </StackPanel>
 
-            <ComboBox x:Name="ResponsibleComboBox" Grid.Row="8" Margin="0,0,0,10" materialDesign:HintAssist.Hint="Ответственный"/>
+        <StackPanel Grid.Row="9" Margin="0,0,0,10">
+            <TextBlock Text="Ответственный* " FontSize="14" Margin="0,0,0,5"/>
+            <ComboBox x:Name="ResponsibleComboBox" Margin="0,0,0,5"/>
+        </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="9" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button Content="Сохранить" Click="SaveButton_Click" Margin="0,0,10,0"/>
-                <Button Content="Отмена" Click="CancelButton_Click"/>
-            </StackPanel>
-        </Grid>
-    </ScrollViewer>
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Сохранить" Click="SaveButton_Click" Margin="0,0,10,0"/>
+            <Button Content="Отмена" Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
 </Window>

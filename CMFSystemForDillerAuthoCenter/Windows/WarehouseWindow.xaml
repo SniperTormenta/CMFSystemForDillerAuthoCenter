@@ -105,15 +105,15 @@
                       MouseDoubleClick="CarsDataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
-                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="150"/>
-                    <DataGridTextColumn Header="Тип авто" Binding="{Binding Type}" Width="100"/>
-                    <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="80"/>
-                    <DataGridTextColumn Header="Марка" Binding="{Binding Brand}" Width="100"/>
-                    <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="100"/>
+                    <DataGridTextColumn Header="Марка" Binding="{Binding Brand}" Width="150"/>
+                    <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="150"/>
                     <DataGridTextColumn Header="Год выпуска" Binding="{Binding Year}" Width="100"/>
-                    <DataGridTextColumn Header="Двигатель" Binding="{Binding Engine}" Width="100"/>
-                    <DataGridTextColumn Header="Привод" Binding="{Binding Drive}" Width="100"/>
-                    <DataGridTextColumn Header="Тип кузова" Binding="{Binding BodyType}" Width="100"/>
+                    <DataGridTextColumn Header="Госномер" Binding="{Binding LicensePlate}" Width="120"/>
+                    <DataGridTextColumn Header="Регион" Binding="{Binding LicensePlateRegion}" Width="80"/>
+                    <DataGridTextColumn Header="VIN" Binding="{Binding Vin}" Width="200"/>
+                    <DataGridTextColumn Header="Владелец" Binding="{Binding OwnerLastName}" Width="150"/>
+                    <DataGridTextColumn Header="Цвет" Binding="{Binding Color}" Width="100"/>
+                    <DataGridTextColumn Header="Мощность (л.с.)" Binding="{Binding EnginePower}" Width="120"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
