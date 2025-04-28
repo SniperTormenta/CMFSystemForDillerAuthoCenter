@@ -66,7 +66,7 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Calendar" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Календарь" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
+                            <Button x:Name="CalendareButton" Content="Отчет" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Click="CalendareButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">

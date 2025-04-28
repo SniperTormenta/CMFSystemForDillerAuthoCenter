@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CMFSystemForDillerAuthoCenter.Services;
 
 
 namespace CMFSystemForDillerAuthoCenter
@@ -27,6 +28,10 @@ namespace CMFSystemForDillerAuthoCenter
         private List<Deal> orders;
         private ClientStorage Client;
         private EmployeeStorage employeeStorage;
+        private DealData _dealData;
+        private ClientStorage _clientStorage;
+        private EmployeeStorage _employeeStorage;
+        private EmailService _emailService;
 
         public List<Deal> Appeals
         {
@@ -47,6 +52,10 @@ namespace CMFSystemForDillerAuthoCenter
             employeeStorage = EmployeeStorage.Load(); // Загружаем сотрудников
             LoadData();
             DataContext = this;
+            _dealData = DataStorage.DealData ?? new DealData();
+            _clientStorage = new ClientStorage(); // Предполагается, что у вас есть такой класс
+            _employeeStorage = new EmployeeStorage(); // Предполагается, что у вас есть такой класс
+            _emailService = new EmailService(); // Предполагается, что у вас есть такой класс
         }
 
         private void LoadData()
@@ -183,6 +192,15 @@ namespace CMFSystemForDillerAuthoCenter
             var clientsWindow = new ClientsWindow();
             clientsWindow.Show();
             Close();
+        }
+
+        private void CalendareButton_Click(object sender, RoutedEventArgs e)
+        {
+            var reportWindow = new ReportWindow(_dealData, _clientStorage, _employeeStorage, _emailService)
+            {
+                Owner = this
+            };
+            reportWindow.ShowDialog();
         }
     }
 }

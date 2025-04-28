@@ -29,6 +29,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             _attachments = new List<string>();
         }
 
+        public void AddAttachment(string filePath)
+        {
+            _attachments.Add(filePath);
+            AttachmentsTextBlock.Text = $"Вложения: {string.Join(", ", _attachments.Select(System.IO.Path.GetFileName))}";
+        }
+
         private void AddAttachmentButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog { Multiselect = true };
@@ -50,7 +56,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             var email = new EmailMessage
             {
                 Id = Guid.NewGuid().ToString(),
-                Sender = "galochkin666@gmail.com", // Замени на свой email
+                Sender = "galochkin666@gmail.com",
                 Recipients = new List<string> { ToTextBox.Text },
                 Subject = SubjectTextBox.Text,
                 Body = BodyTextBox.Text,
