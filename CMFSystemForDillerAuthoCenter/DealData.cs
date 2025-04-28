@@ -39,6 +39,7 @@ public class Deal
     public bool IsDeliveryRequired { get; set; } // Для заказов: нужна ли доставка
     public string DeliveryDate { get; set; } // Для заказов
     public string DeliveryAddress { get; set; } // Для заказов
+    public string ServicedBy { get; set; } // ID сотрудника, который обслуживал заказ/обращение
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
 }

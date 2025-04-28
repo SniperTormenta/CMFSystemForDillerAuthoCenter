@@ -49,6 +49,10 @@
             <TextBlock Text="Дата* " FontSize="14" Margin="0,0,0,5"/>
             <DatePicker x:Name="DatePicker" Margin="0,0,0,10"/>
 
+            <!-- Обслуживающий сотрудник -->
+            <TextBlock Text="Обслуживающий сотрудник* " FontSize="14" Margin="0,0,0,5"/>
+            <ComboBox x:Name="ServicedByComboBox" Margin="0,0,0,10" DisplayMemberPath="FullName"/>
+
             <!-- Тема обращения -->
             <TextBlock Text="Тема обращения* " FontSize="14" Margin="0,0,0,5" x:Name="ThemeLabel"/>
             <TextBox x:Name="ThemeTextBox" Margin="0,0,0,10"/>

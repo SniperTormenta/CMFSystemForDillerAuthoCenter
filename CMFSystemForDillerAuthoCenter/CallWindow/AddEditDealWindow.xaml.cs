@@ -1,18 +1,11 @@
 ﻿using CMFSystemForDillerAuthoCenter;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CMFSystemForDillerAuthoCenter.CallWindow
 {
@@ -44,6 +37,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
             InitializeCarComboBox();
             InitializeClientComboBox();
+            InitializeServicedByComboBox(); // Инициализация списка сотрудников
             InitializeForm(defaultType);
 
             if (dealToEdit != null)
@@ -59,7 +53,6 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             this.employeeStorage = employeeStorage;
             this.deal = deal;
         }
-
 
         private void InitializeCarComboBox()
         {
@@ -87,6 +80,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             ClientComboBox.DisplayMemberPath = "ClientName";
         }
 
+        private void InitializeServicedByComboBox()
+        {
+            ServicedByComboBox.ItemsSource = employeeStorage.Employees;
+            ServicedByComboBox.DisplayMemberPath = "FullName";
+        }
+
         private void InitializeForm(string defaultType)
         {
             if (defaultType != null)
@@ -112,6 +111,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             {
                 DatePicker.SelectedDate = date;
             }
+            ServicedByComboBox.SelectedItem = employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
             ThemeTextBox.Text = deal.Theme;
             NotesTextBox.Text = deal.Notes;
 
@@ -367,6 +367,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                     return;
                 }
 
+                if (ServicedByComboBox.SelectedItem == null)
+                {
+                    MessageBox.Show("Пожалуйста, выберите обслуживающего сотрудника.");
+                    return;
+                }
+
                 deal.Type = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
                 deal.ClientId = (ClientComboBox.SelectedItem as Client)?.Id;
                 deal.ClientName = ClientNameTextBox.Text;
@@ -374,6 +380,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 deal.ClientEmail = ClientEmailTextBox.Text;
                 deal.Date = DatePicker.SelectedDate.Value.ToString("dd.MM.yyyy");
                 deal.Notes = NotesTextBox.Text;
+                deal.ServicedBy = (ServicedByComboBox.SelectedItem as Employee)?.Id;
 
                 if (deal.Type == "Обращение")
                 {
@@ -450,6 +457,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                     }
                     deal.Status = $"{(PaymentStatusComboBox.SelectedItem as ComboBoxItem)?.Content} / {(OrderStatusComboBox.SelectedItem as ComboBoxItem)?.Content}";
                 }
+
+                if (deal.CreatedDate == default)
+                {
+                    deal.CreatedDate = DateTime.Now;
+                }
+                deal.ModifiedDate = DateTime.Now;
 
                 if (!dealData.Deals.Contains(deal))
                 {
