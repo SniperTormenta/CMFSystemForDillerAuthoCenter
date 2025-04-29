@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CMFSystemForDillerAuthoCenter
 {
@@ -16,6 +13,7 @@ namespace CMFSystemForDillerAuthoCenter
         public string Position { get; set; }
         public string Notes { get; set; }
     }
+
     public class Client
     {
         public string Id { get; set; }
@@ -32,6 +30,9 @@ namespace CMFSystemForDillerAuthoCenter
         public string Tag { get; set; } // Метка для фильтрации
         public string Notes { get; set; }
         public string Responsible { get; set; } // Ответственный сотрудник
+        public string PassportDetails { get; set; } // Добавляем паспортные данные
+        public string LivingAddress { get; set; } // Добавляем адрес проживания
+        public string RegisteredAddress { get; set; } // Добавляем адрес регистрации
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 

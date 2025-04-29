@@ -22,13 +22,15 @@ namespace CMFSystemForDillerAuthoCenter.Windows
     {
         private DealData dealData;
         private CarData carData;
+        private ClientStorage clientStorage;
         private UserControl variant1;
         private UserControl variant2;
 
-        public NewDealsWindow(CarData carData)
+        public NewDealsWindow(CarData carData, ClientStorage clientStorage)
         {
             InitializeComponent();
             this.carData = DataStorage.CarData;
+            this.clientStorage = clientStorage;
             DataStorage.LoadDeals();
             dealData = DataStorage.DealData;
             System.Diagnostics.Debug.WriteLine($"NewDealsWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
@@ -42,6 +44,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             InitializeComponent();
             DataStorage.LoadCars();
             carData = DataStorage.CarData;
+            clientStorage = ClientStorage.Load();
             DataStorage.LoadDeals();
             dealData = DataStorage.DealData;
             System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
@@ -61,25 +64,32 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         private void SetInitialView()
         {
             DealsContent.Content = variant1;
-            //ViewToggleButton.Content = "Объединенный вид";
         }
 
         private void ViewToggleButton_Checked(object sender, RoutedEventArgs e)
         {
             DealsContent.Content = variant2;
-            //ViewToggleButton.Content = "Вкладки";
         }
 
         private void ViewToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
             DealsContent.Content = variant1;
-            //ViewToggleButton.Content = "Объединенный вид";
+        }
+
+        private void CreateSaleContractButton_Click(object sender, RoutedEventArgs e)
+        {
+            var createContractWindow = new CreateSaleContractWindow(dealData, carData, clientStorage)
+            {
+                Owner = this
+            };
+            createContractWindow.ShowDialog();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             DataStorage.SaveDeals();
             DataStorage.SaveCars();
+            clientStorage.Save();
             System.Diagnostics.Debug.WriteLine($"NewDealsWindow OnClosing: Сохранено {dealData?.Deals?.Count ?? 0} сделок.");
             base.OnClosing(e);
         }

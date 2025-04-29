@@ -146,6 +146,9 @@
     <Compile Include="CallWindow\ComposeEmailWindow.xaml.cs">
       <DependentUpon>ComposeEmailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CallWindow\CreateSaleContractWindow.xaml.cs">
+      <DependentUpon>CreateSaleContractWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CallWindow\NewDealsVariant1.xaml.cs">
       <DependentUpon>NewDealsVariant1.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CallWindow\ComposeEmailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CallWindow\CreateSaleContractWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

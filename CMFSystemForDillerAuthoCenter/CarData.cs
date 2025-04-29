@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
 
 namespace CMFSystemForDillerAuthoCenter
 {
@@ -28,9 +23,12 @@ namespace CMFSystemForDillerAuthoCenter
         public string LicensePlateRegion { get; set; }
         public string Vin { get; set; }
         public string BodyNumber { get; set; }
+        public string EngineNumber { get; set; } // Добавляем № двигателя
+        public string ChassisNumber { get; set; } // Добавляем № шасси (рамы)
         public string VehicleCategory { get; set; }
         public int Year { get; set; }
         public string Color { get; set; }
+        public string Mileage { get; set; } // Добавляем пробег
         public string EnginePower { get; set; }
         public string EnvironmentalClass { get; set; }
         public string MaxPermittedWeight { get; set; }
@@ -40,7 +38,8 @@ namespace CMFSystemForDillerAuthoCenter
         public string Brand { get; set; }
         public string Model { get; set; }
         public string PhotoPath { get; set; }
-        public string DisplayName { get; set; } // Добавляем свойство для отображения в ComboBox
+        [JsonIgnore]
+        public string DisplayName => $"{Brand} {Model} ({Year})"; // Обновляем для JsonIgnore
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
     }

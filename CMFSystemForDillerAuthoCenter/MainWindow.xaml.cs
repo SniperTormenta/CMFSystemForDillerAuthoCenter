@@ -26,11 +26,9 @@ namespace CMFSystemForDillerAuthoCenter
     {
         private List<Deal> appeals;
         private List<Deal> orders;
-        private ClientStorage Client;
-        private EmployeeStorage employeeStorage;
-        private DealData _dealData;
         private ClientStorage _clientStorage;
         private EmployeeStorage _employeeStorage;
+        private DealData _dealData;
         private EmailService _emailService;
 
         public List<Deal> Appeals
@@ -48,14 +46,12 @@ namespace CMFSystemForDillerAuthoCenter
         public MainWindow()
         {
             InitializeComponent();
-            Client = ClientStorage.Load();
-            employeeStorage = EmployeeStorage.Load(); // Загружаем сотрудников
+            _clientStorage = ClientStorage.Load();
+            _employeeStorage = EmployeeStorage.Load();
+            _dealData = DataStorage.DealData ?? new DealData();
+            _emailService = new EmailService();
             LoadData();
             DataContext = this;
-            _dealData = DataStorage.DealData ?? new DealData();
-            _clientStorage = new ClientStorage(); // Предполагается, что у вас есть такой класс
-            _employeeStorage = new EmployeeStorage(); // Предполагается, что у вас есть такой класс
-            _emailService = new EmailService(); // Предполагается, что у вас есть такой класс
         }
 
         private void LoadData()
@@ -98,7 +94,7 @@ namespace CMFSystemForDillerAuthoCenter
         {
             if (sender is Button button && button.Tag is Deal deal)
             {
-                var editWindow = new AddEditDealWindow(DataStorage.DealData, Client, employeeStorage, deal);
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, _clientStorage, _employeeStorage, deal);
                 editWindow.Owner = this;
                 if (editWindow.ShowDialog() == true)
                 {
@@ -112,7 +108,7 @@ namespace CMFSystemForDillerAuthoCenter
         {
             if (sender is Button button && button.Tag is Deal deal)
             {
-                var editWindow = new AddEditDealWindow(DataStorage.DealData, Client, employeeStorage, deal);
+                var editWindow = new AddEditDealWindow(DataStorage.DealData, _clientStorage, _employeeStorage, deal);
                 editWindow.Owner = this;
                 if (editWindow.ShowDialog() == true)
                 {
@@ -176,7 +172,7 @@ namespace CMFSystemForDillerAuthoCenter
 
         private void NewDealsButton_Click(object sender, RoutedEventArgs e)
         {
-            var newDealsWindow = new NewDealsWindow();
+            var newDealsWindow = new NewDealsWindow(DataStorage.CarData, _clientStorage);
             newDealsWindow.Show();
             Close();
         }
@@ -201,6 +197,15 @@ namespace CMFSystemForDillerAuthoCenter
                 Owner = this
             };
             reportWindow.ShowDialog();
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            DataStorage.SaveDeals();
+            DataStorage.SaveCars();
+            _clientStorage.Save();
+            _employeeStorage.Save();
+            base.OnClosing(e);
         }
     }
 }
