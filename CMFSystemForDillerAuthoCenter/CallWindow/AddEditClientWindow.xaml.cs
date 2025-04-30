@@ -67,8 +67,11 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             // Инициализация формы
             if (clientToEdit != null)
             {
-                IndividualRadioButton.IsChecked = clientToEdit.Type == "Физлицо";
-                LegalEntityRadioButton.IsChecked = clientToEdit.Type == "Юрлицо";
+                if (IndividualRadioButton != null && LegalEntityRadioButton != null)
+                {
+                    IndividualRadioButton.IsChecked = clientToEdit.Type == "Физлицо";
+                    LegalEntityRadioButton.IsChecked = clientToEdit.Type == "Юрлицо";
+                }
                 FirstNameTextBox.Text = clientToEdit.FirstName;
                 LastNameTextBox.Text = clientToEdit.LastName;
                 MiddleNameTextBox.Text = clientToEdit.MiddleName;
@@ -87,14 +90,26 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             }
             else
             {
-                IndividualRadioButton.IsChecked = true; // По умолчанию "Физлицо"
+                if (IndividualRadioButton != null)
+                {
+                    IndividualRadioButton.IsChecked = true; // По умолчанию "Физлицо"
+                }
             }
 
+            // Вызываем UpdateVisibility после полной инициализации
             UpdateVisibility();
         }
 
         private void UpdateVisibility()
         {
+            if (IndividualRadioButton == null || LegalEntityRadioButton == null)
+            {
+                // Если элементы не инициализированы, устанавливаем значения по умолчанию
+                IsIndividual = true;
+                IsLegalEntity = false;
+                return;
+            }
+
             IsIndividual = IndividualRadioButton.IsChecked == true;
             IsLegalEntity = LegalEntityRadioButton.IsChecked == true;
         }
@@ -151,7 +166,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 return;
             }
 
-            bool isIndividual = IndividualRadioButton.IsChecked == true;
+            bool isIndividual = IndividualRadioButton?.IsChecked == true;
 
             if (isIndividual)
             {

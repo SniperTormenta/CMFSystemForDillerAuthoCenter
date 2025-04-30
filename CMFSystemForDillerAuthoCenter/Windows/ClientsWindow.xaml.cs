@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CMFSystemForDillerAuthoCenter.Services;
 
 namespace CMFSystemForDillerAuthoCenter.Windows
 {
@@ -22,6 +23,9 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         private EmployeeStorage _employeeStorage;
         private List<Client> _filteredClients;
         private ClientFilter _currentFilter;
+        private DealData _dealData;
+        private ClientStorage _clientStorage;
+        private EmailService _emailService;
 
         public List<Client> FilteredClients
         {
@@ -273,32 +277,53 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             Close();
         }
 
-        private void NewDealsButton_Click(object sender, RoutedEventArgs e)
+        private void EmployeesButton_Click(object sender, RoutedEventArgs e)
         {
-            var newDealsWindow = new NewDealsWindow();
-            newDealsWindow.Show();
+            var employeesWindow = new EmployeesWindow();
+            employeesWindow.Show();
             Close();
         }
-
-        private void SkadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void SkadButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             var warehouseWindow = new WarehouseWindow();
             warehouseWindow.Show();
             Close();
         }
 
-        private void EmailButton_Click(object sender, RoutedEventArgs e)
+        private void GoToWarehouseButton_Click(object sender, RoutedEventArgs e)
         {
-            var emailWindow = new EmailWindow();
-            emailWindow.Show();
+            var warehouseWindow = new WarehouseWindow();
+            warehouseWindow.Show();
             Close();
         }
 
-        private void EmployeesButton_Click(object sender, RoutedEventArgs e)
+        private void NewDealsButton_Click(object sender, RoutedEventArgs e)
         {
-            var employeesWindow = new EmployeesWindow();
-            employeesWindow.Show();
+            var newDealsWindow = new NewDealsWindow(DataStorage.CarData, _clientStorage);
+            newDealsWindow.Show();
             Close();
+        }
+
+        private void EmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            var emailwindow = new EmailWindow();
+            emailwindow.Show();
+        }
+
+        private void ClientsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var clientsWindow = new ClientsWindow();
+            clientsWindow.Show();
+            Close();
+        }
+
+        private void CalendareButton_Click(object sender, RoutedEventArgs e)
+        {
+            var reportWindow = new ReportWindow(_dealData, _clientStorage, _employeeStorage, _emailService)
+            {
+                Owner = this
+            };
+            reportWindow.ShowDialog();
         }
     }
 }

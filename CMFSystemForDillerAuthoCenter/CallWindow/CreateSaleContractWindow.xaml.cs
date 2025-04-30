@@ -15,6 +15,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
+using OpenXmlParagraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
+using OpenXmlRun = DocumentFormat.OpenXml.Wordprocessing.Run;
+using OpenXmlBold = DocumentFormat.OpenXml.Wordprocessing.Bold;
+using OpenXmlText = DocumentFormat.OpenXml.Wordprocessing.Text;
+
+
 namespace CMFSystemForDillerAuthoCenter.CallWindow
 {
     public partial class CreateSaleContractWindow : Window
@@ -140,6 +147,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         private void GenerateContract(string filePath)
         {
             var car = _carData.Cars.FirstOrDefault(c => c.Id == _selectedDeal.CarId);
+            if (_selectedDeal == null || car == null)
+            {
+                MessageBox.Show("Ошибка: Не удалось загрузить данные сделки или автомобиля.");
+                return;
+            }
+
             string contractNumber = _selectedDeal.Id;
             string date = DateTime.Now.ToString("dd.MM.yyyy");
             string place = "г. Москва";
@@ -170,21 +183,21 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
                 // Пункт 1: Предмет договора
                 AddParagraph(body, "1. Продавец передает в собственность покупателя (продает), а Покупатель принимает (покупает) и оплачивает транспортное средство:", false, 24);
-                AddParagraph(body, $"Марка, модель ТС: {(car != null ? $"{car.Brand} {car.Model}" : "Не указан")}", false, 24);
-                AddParagraph(body, $"Идентификационный номер (VIN): {(car?.Vin ?? "Не указан")}", false, 24);
-                AddParagraph(body, $"Год выпуска: {(car != null ? car.Year.ToString() : "Не указан")}", false, 24);
+                AddParagraph(body, $"Марка, модель ТС: {car.Brand} {car.Model}", false, 24);
+                AddParagraph(body, $"Идентификационный номер (VIN): {car.Vin ?? "Не указан"}", false, 24);
+                AddParagraph(body, $"Год выпуска: {car.Year}", false, 24);
                 AddParagraph(body, $"№ двигателя: {EngineNumberTextBox.Text}", false, 24);
                 AddParagraph(body, $"№ шасси (рамы): {ChassisNumberTextBox.Text}", false, 24);
-                AddParagraph(body, $"№ кузова: {(car?.BodyNumber ?? "Не указан")}", false, 24);
-                AddParagraph(body, $"Цвет: {(car?.Color ?? "Не указан")}", false, 24);
+                AddParagraph(body, $"№ кузова: {car.BodyNumber ?? "Не указан"}", false, 24);
+                AddParagraph(body, $"Цвет: {car.Color ?? "Не указан"}", false, 24);
                 AddParagraph(body, $"Пробег: {MileageTextBox.Text}", false, 24);
-                AddParagraph(body, $"Государственный регистрационный знак: {(car != null ? $"{car.LicensePlate} {car.LicensePlateRegion}" : "Не указан")}", false, 24);
-                AddParagraph(body, $"Свидетельство о регистрации ТС: {(car != null ? $"{car.StsSeries} № {car.StsNumber}" : "Не указан")}", false, 24);
+                AddParagraph(body, $"Государственный регистрационный знак: {car.LicensePlate} {car.LicensePlateRegion}", false, 24);
+                AddParagraph(body, $"Свидетельство о регистрации ТС: {car.StsSeries} № {car.StsNumber}", false, 24);
                 AddParagraph(body, $"Выдано: {place}", false, 24);
                 AddParagraph(body, "", false, 24); // Пустая строка
 
                 // Пункт 2: Подтверждение права собственности
-                AddParagraph(body, $"2. Указанное в п. 1 транспортное средство, принадлежит Продавцу на праве собственности, что подтверждает паспорт транспортного средства, серии {(car?.PtsSeries ?? "Не указан")} №{(car?.PtsNumber ?? "Не указан")}, выданный {place}, «{date}»", false, 24);
+                AddParagraph(body, $"2. Указанное в п. 1 транспортное средство, принадлежит Продавцу на праве собственности, что подтверждает паспорт транспортного средства, серии {(car.PtsSeries ?? "Не указан")} №{(car.PtsNumber ?? "Не указан")}, выданный {place}, «{date}»", false, 24);
                 AddParagraph(body, "", false, 24); // Пустая строка
 
                 // Пункт 3: Заявление продавца
@@ -216,11 +229,16 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             }
         }
 
-        private void AddParagraph(Body body, string text, bool bold, int fontSize, JustificationValues justification = JustificationValues.Left)
+        private void AddParagraph(Body body, string text, bool bold, int fontSize)
         {
-            Paragraph para = body.AppendChild(new Paragraph());
-            Run run = para.AppendChild(new Run());
-            run.AppendChild(new Text(text));
+            AddParagraph(body, text, bold, fontSize, JustificationValues.Left);
+        }
+
+        private void AddParagraph(Body body, string text, bool bold, int fontSize, JustificationValues justification)
+        {
+            OpenXmlParagraph para = body.AppendChild(new OpenXmlParagraph());
+            OpenXmlRun run = para.AppendChild(new OpenXmlRun());
+            run.AppendChild(new OpenXmlText(text));
             para.ParagraphProperties = new ParagraphProperties
             {
                 Justification = new Justification { Val = justification },
@@ -228,7 +246,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             };
             run.RunProperties = new RunProperties
             {
-                Bold = bold ? new Bold() : null,
+                Bold = bold ? new OpenXmlBold() : null,
                 FontSize = new FontSize { Val = fontSize.ToString() }
             };
         }
@@ -316,3 +334,4 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             return $"{deal.Id}: {deal.ClientName} ({deal.Date})";
         }
     }
+}

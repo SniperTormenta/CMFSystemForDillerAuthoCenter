@@ -1,4 +1,5 @@
 ﻿using CMFSystemForDillerAuthoCenter.CallWindow;
+using CMFSystemForDillerAuthoCenter.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace CMFSystemForDillerAuthoCenter.Windows
 {
     public partial class WarehouseWindow : Window
     {
+        private DealData _dealData;
+        private ClientStorage _clientStorage;
+        private EmployeeStorage _employeeStorage;
+        private EmailService _emailService;
+
         public WarehouseWindow()
         {
             InitializeComponent();
@@ -74,23 +80,66 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             }
         }
 
-        private void GoToMainMenu_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            DataStorage.SaveCars();
+            base.OnClosing(e);
+        }
+
+        private void MainWindowButton_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = new MainWindow();
             mainWindow.Show();
             Close();
         }
 
-        private void OpenNewDealsWindow_Click(object sender, RoutedEventArgs e)
+        private void EmployeesButton_Click(object sender, RoutedEventArgs e)
         {
-            var newDealsWindow = new NewDealsWindow(); // Предполагаем, что NewDealsWindow также работает с DataStorage
-            newDealsWindow.Show();
+            var employeesWindow = new EmployeesWindow();
+            employeesWindow.Show();
+            Close();
+        }
+        private void SkadButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
+        {
+            var warehouseWindow = new WarehouseWindow();
+            warehouseWindow.Show();
+            Close();
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        private void GoToWarehouseButton_Click(object sender, RoutedEventArgs e)
         {
-            DataStorage.SaveCars();
-            base.OnClosing(e);
+            var warehouseWindow = new WarehouseWindow();
+            warehouseWindow.Show();
+            Close();
+        }
+
+        private void NewDealsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var newDealsWindow = new NewDealsWindow(DataStorage.CarData, _clientStorage);
+            newDealsWindow.Show();
+            Close();
+        }
+
+        private void EmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            var emailwindow = new EmailWindow();
+            emailwindow.Show();
+        }
+
+        private void ClientsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var clientsWindow = new ClientsWindow();
+            clientsWindow.Show();
+            Close();
+        }
+
+        private void CalendareButton_Click(object sender, RoutedEventArgs e)
+        {
+            var reportWindow = new ReportWindow(_dealData, _clientStorage, _employeeStorage, _emailService)
+            {
+                Owner = this
+            };
+            reportWindow.ShowDialog();
         }
     }
 }

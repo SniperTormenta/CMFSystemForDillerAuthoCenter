@@ -156,7 +156,23 @@ namespace CMFSystemForDillerAuthoCenter
             }
         }
 
-        private void SkadButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            DataStorage.SaveDeals();
+            DataStorage.SaveCars();
+            _clientStorage.Save();
+            _employeeStorage.Save();
+            base.OnClosing(e);
+        }
+        private void EmployeesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var employeesWindow = new EmployeesWindow();
+            employeesWindow.Show();
+            Close();
+        }
+        private void SkadButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             var warehouseWindow = new WarehouseWindow();
             warehouseWindow.Show();
@@ -197,15 +213,6 @@ namespace CMFSystemForDillerAuthoCenter
                 Owner = this
             };
             reportWindow.ShowDialog();
-        }
-
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            DataStorage.SaveDeals();
-            DataStorage.SaveCars();
-            _clientStorage.Save();
-            _employeeStorage.Save();
-            base.OnClosing(e);
         }
     }
 }
