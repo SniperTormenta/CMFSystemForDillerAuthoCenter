@@ -1,22 +1,13 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
-
 
 namespace CMFSystemForDillerAuthoCenter.CallWindow
 {
@@ -67,11 +58,42 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 {
                     try
                     {
-                        CarPhotoImage.Source = new BitmapImage(new Uri(carToEdit.PhotoPath));
+                        string basePath = AppDomain.CurrentDomain.BaseDirectory; // Базовая директория приложения
+                        string absolutePath;
+
+                        // Проверяем, является ли путь абсолютным
+                        if (Path.IsPathRooted(carToEdit.PhotoPath))
+                        {
+                            absolutePath = carToEdit.PhotoPath; // Если путь абсолютный, используем его
+                        }
+                        else
+                        {
+                            // Если путь относительный, преобразуем его в абсолютный
+                            absolutePath = Path.GetFullPath(Path.Combine(basePath, carToEdit.PhotoPath));
+                        }
+
+                        // Проверяем, существует ли файл
+                        if (File.Exists(absolutePath))
+                        {
+                            // Приводим путь к формату, подходящему для Uri (заменяем \ на /)
+                            string uriPath = absolutePath.Replace("\\", "/");
+                            CarPhotoImage.Source = new BitmapImage(new Uri(uriPath, UriKind.Absolute));
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Файл фотографии по пути {absolutePath} не найден.");
+                            CarPhotoImage.Source = null;
+                        }
+                    }
+                    catch (UriFormatException ex)
+                    {
+                        MessageBox.Show($"Ошибка формата URI: {ex.Message}. Проверьте путь: {carToEdit.PhotoPath}");
+                        CarPhotoImage.Source = null;
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Ошибка при загрузке существующей фотографии: {ex.Message}");
+                        CarPhotoImage.Source = null;
                     }
                 }
             }
@@ -88,13 +110,26 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             {
                 try
                 {
-                    string photoPath = openFileDialog.FileName;
-                    CarPhotoImage.Source = new BitmapImage(new Uri(photoPath));
-                    _car.PhotoPath = photoPath; // Сохраняем путь к фотографии
+                    string fileName = Path.GetFileName(openFileDialog.FileName);
+                    string destinationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", fileName);
+
+                    // Создаем директорию Images, если она не существует
+                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                    // Копируем файл в папку Images приложения
+                    File.Copy(openFileDialog.FileName, destinationPath, true);
+
+                    // Приводим путь к формату, подходящему для Uri
+                    string uriPath = destinationPath.Replace("\\", "/");
+                    CarPhotoImage.Source = new BitmapImage(new Uri(uriPath, UriKind.Absolute));
+
+                    // Сохраняем относительный путь
+                    _car.PhotoPath = Path.Combine("Images", fileName).Replace("\\", "/");
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Ошибка при загрузке фото: {ex.Message}");
+                    CarPhotoImage.Source = null;
                 }
             }
         }

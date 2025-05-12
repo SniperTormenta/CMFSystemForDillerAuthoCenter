@@ -5,16 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
 
 namespace CMFSystemForDillerAuthoCenter.Windows
@@ -32,6 +25,57 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             DataStorage.LoadCars();
             CarsDataGrid.ItemsSource = DataStorage.CarData.Cars; // Используем DataStorage напрямую
             System.Diagnostics.Debug.WriteLine($"WarehouseWindow: DataStorage.CarData содержит {DataStorage.CarData.Cars.Count} автомобилей.");
+
+            // Подписка на событие перехвата клавиш
+            PreviewKeyDown += WarehouseWindow_PreviewKeyDown;
+        }
+
+        private void WarehouseWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверка комбинации Ctrl+Alt+A
+            if (e.Key == Key.A && Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftAlt))
+            {
+                e.Handled = true; // Отмечаем, что событие обработано
+                LoadJsonFile();
+            }
+        }
+
+        private void LoadJsonFile()
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON files (*.json)|*.json",
+                Title = "Выберите JSON-файл с данными автомобилей"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string jsonContent = File.ReadAllText(openFileDialog.FileName);
+                    var loadedCars = JsonConvert.DeserializeObject<List<Car>>(jsonContent);
+
+                    if (loadedCars != null && loadedCars.Any())
+                    {
+                        // Очищаем существующие данные и заменяем их новыми
+                        DataStorage.CarData.Cars.Clear();
+                        DataStorage.CarData.Cars.AddRange(loadedCars);
+                        CarsDataGrid.ItemsSource = null;
+                        CarsDataGrid.ItemsSource = DataStorage.CarData.Cars;
+                        DataStorage.SaveCars(); // Сохраняем обновленные данные
+                        System.Diagnostics.Debug.WriteLine($"Загружено {loadedCars.Count} автомобилей.");
+                        MessageBox.Show($"Успешно загружено {loadedCars.Count} автомобилей. Все предыдущие данные стерты.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Файл JSON не содержит данных об автомобилях.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при загрузке файла: {ex.Message}");
+                }
+            }
         }
 
         private void AddCarButton_Click(object sender, RoutedEventArgs e)
@@ -99,6 +143,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             employeesWindow.Show();
             Close();
         }
+
         private void SkadButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             var warehouseWindow = new WarehouseWindow();

@@ -74,7 +74,7 @@
                     <ListViewItem Height="50">
                         <StackPanel x:Name="SkadButton" Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="GoToWarehousemenu" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
+                            <Button x:Name="GoToWarehousemenu" Content="Склад" Style="{StaticResource MaterialDesignFlatButton}" 
                                     Foreground="White" Click="SkadButton_MouseLeftButtonDown"/>
                         </StackPanel>
                     </ListViewItem>
