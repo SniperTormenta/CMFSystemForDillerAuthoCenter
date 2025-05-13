@@ -6,7 +6,8 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.Windows"
         mc:Ignorable="d"
-        Title="EmployeesWindow" Height="800" Width="1080">
+        Title="EmployeesWindow" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>

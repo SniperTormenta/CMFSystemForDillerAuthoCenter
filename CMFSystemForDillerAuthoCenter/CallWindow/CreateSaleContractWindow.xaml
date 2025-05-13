@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="CreateSaleContractWindow" Height="700" Width="600">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="10">

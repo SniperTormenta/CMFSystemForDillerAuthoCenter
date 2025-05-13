@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="AddEditDealWindow" Height="600" Width="800">
     <Grid>
         <Grid.RowDefinitions>

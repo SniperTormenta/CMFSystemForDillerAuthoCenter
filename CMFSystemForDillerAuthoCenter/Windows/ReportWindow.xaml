@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.Windows"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        
-        
+        WindowStartupLocation="CenterScreen"
         Title="ReportWindow" Height="500" Width="800">
     <Grid Margin="10">
         <Grid.RowDefinitions>

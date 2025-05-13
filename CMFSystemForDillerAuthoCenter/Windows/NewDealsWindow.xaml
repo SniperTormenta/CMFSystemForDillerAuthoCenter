@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterScreen"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
-        Title="NewDealsWindow" Height="1080" Width="1920">
+        Title="NewDealsWindow" Height="800" Width="1200">
 
     <Grid>
         <!-- Статичный сайдбар слева -->
@@ -92,7 +92,7 @@
                 <TextBlock Text="Переключение вида" FontSize="24" FontWeight="Bold" Margin="0,0,30,0" VerticalAlignment="Center"/>
                 <ToggleButton x:Name="ViewToggleButton" 
                               Style="{StaticResource MaterialDesignSwitchToggleButton}"
-                              Width="118" 
+                              Width="70" 
                               Height="50" 
                               FontSize="11" 
                               Padding="9" 
