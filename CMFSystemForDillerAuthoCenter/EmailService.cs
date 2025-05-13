@@ -21,7 +21,7 @@ namespace CMFSystemForDillerAuthoCenter.Services
         private readonly string _imapHost = "imap.gmail.com";
         private readonly int _imapPort = 993;
         private readonly string _username = "Galochkin666@gmail.com"; // Замени на свой email
-        private readonly string _password = ""; // Пароль приложения
+        private readonly string _password = "ycmc diqr jhbj xvso"; // Пароль приложения
         private readonly string _storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "emails.json");
         private EmailStorage _storage;
 

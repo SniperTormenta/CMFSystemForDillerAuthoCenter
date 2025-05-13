@@ -34,7 +34,7 @@
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="MainMenu" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" />
+                             Foreground="White" Click="MainWindowButton_Click" />
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">

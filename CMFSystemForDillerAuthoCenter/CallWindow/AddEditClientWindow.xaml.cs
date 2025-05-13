@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,30 +21,25 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         private ClientStorage _clientStorage;
         private EmployeeStorage _employeeStorage;
         private Client _client;
-        private bool _isIndividual;
-        private bool _isLegalEntity;
+        private string _clientType;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool IsIndividual
+        public string ClientType
         {
-            get => _isIndividual;
+            get => _clientType;
             set
             {
-                _isIndividual = value;
+                _clientType = value;
+                OnPropertyChanged(nameof(ClientType));
                 OnPropertyChanged(nameof(IsIndividual));
+                OnPropertyChanged(nameof(IsLegalEntity));
+                System.Diagnostics.Debug.WriteLine($"ClientType set to: {ClientType}, IsIndividual: {IsIndividual}, IsLegalEntity: {IsLegalEntity}");
             }
         }
 
-        public bool IsLegalEntity
-        {
-            get => _isLegalEntity;
-            set
-            {
-                _isLegalEntity = value;
-                OnPropertyChanged(nameof(IsLegalEntity));
-            }
-        }
+        public bool IsIndividual => ClientType == "Физлицо";
+        public bool IsLegalEntity => ClientType == "Юрлицо";
 
         public AddEditClientWindow(ClientStorage storage, EmployeeStorage employeeStorage, Client clientToEdit = null)
         {
@@ -67,11 +61,9 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             // Инициализация формы
             if (clientToEdit != null)
             {
-                if (IndividualRadioButton != null && LegalEntityRadioButton != null)
-                {
-                    IndividualRadioButton.IsChecked = clientToEdit.Type == "Физлицо";
-                    LegalEntityRadioButton.IsChecked = clientToEdit.Type == "Юрлицо";
-                }
+                ClientType = clientToEdit.Type;
+                IndividualRadioButton.IsChecked = ClientType == "Физлицо";
+                LegalEntityRadioButton.IsChecked = ClientType == "Юрлицо";
                 FirstNameTextBox.Text = clientToEdit.FirstName;
                 LastNameTextBox.Text = clientToEdit.LastName;
                 MiddleNameTextBox.Text = clientToEdit.MiddleName;
@@ -90,33 +82,18 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             }
             else
             {
-                if (IndividualRadioButton != null)
-                {
-                    IndividualRadioButton.IsChecked = true; // По умолчанию "Физлицо"
-                }
+                ClientType = "Физлицо";
+                IndividualRadioButton.IsChecked = true;
             }
-
-            // Вызываем UpdateVisibility после полной инициализации
-            UpdateVisibility();
-        }
-
-        private void UpdateVisibility()
-        {
-            if (IndividualRadioButton == null || LegalEntityRadioButton == null)
-            {
-                // Если элементы не инициализированы, устанавливаем значения по умолчанию
-                IsIndividual = true;
-                IsLegalEntity = false;
-                return;
-            }
-
-            IsIndividual = IndividualRadioButton.IsChecked == true;
-            IsLegalEntity = LegalEntityRadioButton.IsChecked == true;
         }
 
         private void ClientTypeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            UpdateVisibility();
+            if (sender is RadioButton radioButton)
+            {
+                ClientType = radioButton == IndividualRadioButton ? "Физлицо" : "Юрлицо";
+                System.Diagnostics.Debug.WriteLine($"ClientType: {ClientType}, IsIndividual: {IsIndividual}, IsLegalEntity: {IsLegalEntity}");
+            }
         }
 
         private void AddContactPersonButton_Click(object sender, RoutedEventArgs e)
@@ -166,7 +143,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 return;
             }
 
-            bool isIndividual = IndividualRadioButton?.IsChecked == true;
+            bool isIndividual = ClientType == "Физлицо";
 
             if (isIndividual)
             {
@@ -219,7 +196,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
             _client.Type = isIndividual ? "Физлицо" : "Юрлицо";
             _client.FirstName = FirstNameTextBox.Text;
-            _client.LastName = LastNameTextBox.Text;
+            _client.LastName = LastNameTextBox.Text; // Исправлено: было FirstNameTextBox.Text
             _client.MiddleName = MiddleNameTextBox.Text;
             _client.Gender = (GenderComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
             _client.CompanyName = CompanyNameTextBox.Text;

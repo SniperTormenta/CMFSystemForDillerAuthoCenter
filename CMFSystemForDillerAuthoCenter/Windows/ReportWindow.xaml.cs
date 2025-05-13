@@ -11,8 +11,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Globalization;
 using CMFSystemForDillerAuthoCenter.CallWindow;
-
 
 namespace CMFSystemForDillerAuthoCenter.Windows
 {
@@ -26,12 +26,15 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         public ReportWindow(DealData dealData, ClientStorage clientStorage, EmployeeStorage employeeStorage, EmailService emailService)
         {
             InitializeComponent();
-            _dealData = dealData;
-            _clientStorage = clientStorage;
-            _employeeStorage = employeeStorage;
-            _emailService = emailService;
-        }
+            _dealData = dealData ?? throw new ArgumentNullException(nameof(dealData));
+            _clientStorage = clientStorage ?? throw new ArgumentNullException(nameof(clientStorage));
+            _employeeStorage = employeeStorage ?? throw new ArgumentNullException(nameof(employeeStorage));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 
+            // Убедимся, что данные сделок загружены
+            DataStorage.LoadDeals();
+            System.Diagnostics.Debug.WriteLine($"Инициализация ReportWindow: Загружено {DataStorage.DealData.Deals.Count} сделок.");
+        }
 
         private void PeriodRadioButton_Checked(object sender, RoutedEventArgs e)
         {
@@ -60,11 +63,9 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         {
             if (!ValidateInput()) return;
 
-            // Создаем временный файл для отчета
             string tempFilePath = Path.Combine(Path.GetTempPath(), $"Report_{DateTime.Now:yyyyMMddHHmmss}.{(FormatComboBox.SelectedItem.ToString().Contains("Excel") ? "xlsx" : "docx")}");
             GenerateReport(tempFilePath);
 
-            // Открываем окно отправки email
             var composeWindow = new ComposeEmailWindow(_emailService)
             {
                 Owner = this,
@@ -72,14 +73,13 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 SubjectTextBox = { Text = $"Отчет за {PeriodDatePicker.SelectedDate?.ToString("MMMM yyyy")}" },
                 BodyTextBox = { Text = "В приложении находится сгенерированный отчет." }
             };
-            composeWindow.AddAttachment(tempFilePath); // Используем публичный метод
+            composeWindow.AddAttachment(tempFilePath);
 
             if (composeWindow.ShowDialog() == true)
             {
                 MessageBox.Show("Отчет успешно отправлен по email.");
             }
 
-            // Удаляем временный файл после отправки
             try
             {
                 if (File.Exists(tempFilePath)) File.Delete(tempFilePath);
@@ -112,7 +112,6 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             DateTime selectedDate = PeriodDatePicker.SelectedDate.Value;
             bool isWeekly = WeeklyRadioButton.IsChecked == true;
 
-            // Определяем начало и конец периода
             DateTime startDate, endDate;
             if (isWeekly)
             {
@@ -126,15 +125,28 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 endDate = startDate.AddMonths(1).AddDays(-1);
             }
 
-            // Фильтруем сделки и клиентов за период
-            var dealsInPeriod = _dealData.Deals
-                .Where(d => DateTime.TryParse(d.Date, out DateTime dealDate) && dealDate >= startDate && dealDate <= endDate)
+            System.Diagnostics.Debug.WriteLine($"Выбранный период: с {startDate:dd.MM.yyyy} по {endDate:dd.MM.yyyy}");
+
+            // Фильтруем сделки по полю Date и CreatedDate
+            var dealsInPeriod = DataStorage.DealData.Deals
+                .Where(d =>
+                    (DateTime.TryParseExact(d.Date, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dealDate) ||
+                     DateTime.TryParse(d.CreatedDate.ToString("yyyy-MM-dd"), out dealDate)) && // Поддержка CreatedDate
+                    dealDate >= startDate && dealDate <= endDate)
                 .ToList();
+            System.Diagnostics.Debug.WriteLine($"Сделки в периоде ({startDate:dd.MM.yyyy} - {endDate:dd.MM.yyyy}): {string.Join(", ", dealsInPeriod.Select(d => $"{d.Id}: {d.Date} | {d.CreatedDate:dd.MM.yyyy}"))}");
+
             var clientsInPeriod = _clientStorage.Clients
                 .Where(c => dealsInPeriod.Any(d => d.ClientId == c.Id))
                 .ToList();
+            System.Diagnostics.Debug.WriteLine($"Клиенты в периоде: {string.Join(", ", clientsInPeriod.Select(c => c.Id))}");
 
-            // Формируем отчет в зависимости от формата
+            if (!dealsInPeriod.Any() && !clientsInPeriod.Any())
+            {
+                MessageBox.Show($"Нет данных для периода с {startDate:dd.MM.yyyy} по {endDate:dd.MM.yyyy}.");
+                return;
+            }
+
             if (FormatComboBox.SelectedItem.ToString().Contains("Excel"))
             {
                 GenerateExcelReport(filePath, dealsInPeriod, clientsInPeriod, startDate, endDate);
@@ -156,7 +168,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 currentRow += 2;
 
                 // Сделки
-                if (DealsCheckBox.IsChecked == true && deals.Any())
+                if (DealsCheckBox.IsChecked == true)
                 {
                     worksheet.Cell(currentRow, 1).Value = "Сделки";
                     worksheet.Cell(currentRow, 1).Style.Font.Bold = true;
@@ -170,21 +182,29 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     worksheet.Row(currentRow).Style.Font.Bold = true;
                     currentRow++;
 
-                    foreach (var deal in deals)
+                    if (deals.Any())
                     {
-                        var employee = _employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
-                        worksheet.Cell(currentRow, 1).Value = deal.Date;
-                        worksheet.Cell(currentRow, 2).Value = deal.Type;
-                        worksheet.Cell(currentRow, 3).Value = deal.ClientName;
-                        worksheet.Cell(currentRow, 4).Value = deal.Amount;
-                        worksheet.Cell(currentRow, 5).Value = employee?.FullName ?? "Не указан";
+                        foreach (var deal in deals)
+                        {
+                            var employee = _employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
+                            worksheet.Cell(currentRow, 1).Value = deal.Date;
+                            worksheet.Cell(currentRow, 2).Value = deal.Type;
+                            worksheet.Cell(currentRow, 3).Value = deal.ClientName;
+                            worksheet.Cell(currentRow, 4).Value = deal.Amount;
+                            worksheet.Cell(currentRow, 5).Value = employee?.FullName ?? "Не указан";
+                            currentRow++;
+                        }
+                    }
+                    else
+                    {
+                        worksheet.Cell(currentRow, 1).Value = "Нет сделок за выбранный период.";
                         currentRow++;
                     }
                     currentRow++;
                 }
 
                 // Клиенты
-                if (ClientsCheckBox.IsChecked == true && clients.Any())
+                if (ClientsCheckBox.IsChecked == true)
                 {
                     worksheet.Cell(currentRow, 1).Value = "Клиенты";
                     worksheet.Cell(currentRow, 1).Style.Font.Bold = true;
@@ -196,11 +216,19 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     worksheet.Row(currentRow).Style.Font.Bold = true;
                     currentRow++;
 
-                    foreach (var client in clients)
+                    if (clients.Any())
                     {
-                        worksheet.Cell(currentRow, 1).Value = client.ClientName;
-                        worksheet.Cell(currentRow, 2).Value = client.Phone;
-                        worksheet.Cell(currentRow, 3).Value = client.Email;
+                        foreach (var client in clients)
+                        {
+                            worksheet.Cell(currentRow, 1).Value = client.ClientName;
+                            worksheet.Cell(currentRow, 2).Value = client.Phone;
+                            worksheet.Cell(currentRow, 3).Value = client.Email;
+                            currentRow++;
+                        }
+                    }
+                    else
+                    {
+                        worksheet.Cell(currentRow, 1).Value = "Нет клиентов за выбранный период.";
                         currentRow++;
                     }
                     currentRow++;
@@ -221,6 +249,11 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     currentRow++;
                     worksheet.Cell(currentRow, 1).Value = "Средний чек";
                     worksheet.Cell(currentRow, 2).Value = averageDeal;
+                    currentRow++;
+                }
+                else if (FinancesCheckBox.IsChecked == true && !deals.Any())
+                {
+                    worksheet.Cell(currentRow, 1).Value = "Финансовые показатели: Нет данных за выбранный период.";
                     currentRow++;
                 }
 
@@ -249,7 +282,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 titleRun.RunProperties = new RunProperties { Bold = new Bold(), FontSize = new FontSize { Val = "32" } };
 
                 // Сделки
-                if (DealsCheckBox.IsChecked == true && deals.Any())
+                if (DealsCheckBox.IsChecked == true)
                 {
                     Paragraph dealsHeader = body.AppendChild(new Paragraph());
                     Run dealsHeaderRun = dealsHeader.AppendChild(new Run());
@@ -274,20 +307,28 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     AddTableCell(headerRow, "Сумма");
                     AddTableCell(headerRow, "Сотрудник");
 
-                    foreach (var deal in deals)
+                    if (deals.Any())
                     {
-                        var employee = _employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
+                        foreach (var deal in deals)
+                        {
+                            var employee = _employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
+                            TableRow row = dealsTable.AppendChild(new TableRow());
+                            AddTableCell(row, deal.Date);
+                            AddTableCell(row, deal.Type);
+                            AddTableCell(row, deal.ClientName);
+                            AddTableCell(row, deal.Amount.ToString());
+                            AddTableCell(row, employee?.FullName ?? "Не указан");
+                        }
+                    }
+                    else
+                    {
                         TableRow row = dealsTable.AppendChild(new TableRow());
-                        AddTableCell(row, deal.Date);
-                        AddTableCell(row, deal.Type);
-                        AddTableCell(row, deal.ClientName);
-                        AddTableCell(row, deal.Amount.ToString());
-                        AddTableCell(row, employee?.FullName ?? "Не указан");
+                        AddTableCell(row, "Нет сделок за выбранный период.");
                     }
                 }
 
                 // Клиенты
-                if (ClientsCheckBox.IsChecked == true && clients.Any())
+                if (ClientsCheckBox.IsChecked == true)
                 {
                     Paragraph clientsHeader = body.AppendChild(new Paragraph());
                     Run clientsHeaderRun = clientsHeader.AppendChild(new Run());
@@ -310,12 +351,20 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     AddTableCell(clientsHeaderRow, "Телефон");
                     AddTableCell(clientsHeaderRow, "Email");
 
-                    foreach (var client in clients)
+                    if (clients.Any())
+                    {
+                        foreach (var client in clients)
+                        {
+                            TableRow row = clientsTable.AppendChild(new TableRow());
+                            AddTableCell(row, client.ClientName);
+                            AddTableCell(row, client.Phone);
+                            AddTableCell(row, client.Email);
+                        }
+                    }
+                    else
                     {
                         TableRow row = clientsTable.AppendChild(new TableRow());
-                        AddTableCell(row, client.ClientName);
-                        AddTableCell(row, client.Phone);
-                        AddTableCell(row, client.Email);
+                        AddTableCell(row, "Нет клиентов за выбранный период.");
                     }
                 }
 
@@ -352,6 +401,13 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     TableRow avgDealRow = financesTable.AppendChild(new TableRow());
                     AddTableCell(avgDealRow, "Средний чек");
                     AddTableCell(avgDealRow, averageDeal.ToString());
+                }
+                else if (FinancesCheckBox.IsChecked == true && !deals.Any())
+                {
+                    Paragraph financesHeader = body.AppendChild(new Paragraph());
+                    Run financesHeaderRun = financesHeader.AppendChild(new Run());
+                    financesHeaderRun.AppendChild(new Text("Финансовые показатели: Нет данных за выбранный период."));
+                    financesHeaderRun.RunProperties = new RunProperties { Bold = new Bold(), FontSize = new FontSize { Val = "24" } };
                 }
             }
         }

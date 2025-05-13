@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CMFSystemForDillerAuthoCenter.CallWindow"
-        xmlns:converters="clr-namespace:CMFSystemForDillerAuthoCenter.Converters"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="AddEditClientWindow" Height="600" Width="500">
     <Window.Resources>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <!-- Используем стандартный BooleanToVisibilityConverter -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -34,7 +34,7 @@
         </StackPanel>
 
         <!-- Поля для физлица -->
-        <StackPanel Grid.Row="1" Visibility="{Binding IsIndividual, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+        <StackPanel Grid.Row="1" Visibility="{Binding IsIndividual, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,10">
             <TextBlock Text="Имя* " FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="FirstNameTextBox" Margin="0,0,0,5"/>
             <TextBlock Text="Фамилия* " FontSize="14" Margin="0,0,0,5"/>
@@ -49,13 +49,13 @@
         </StackPanel>
 
         <!-- Поля для юрлица -->
-        <StackPanel Grid.Row="2" Visibility="{Binding IsLegalEntity, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+        <StackPanel Grid.Row="2" Visibility="{Binding IsLegalEntity, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,10">
             <TextBlock Text="Название компании* " FontSize="14" Margin="0,0,0,5"/>
             <TextBox x:Name="CompanyNameTextBox" Margin="0,0,0,5"/>
         </StackPanel>
 
         <!-- Контактные лица (только для юрлица) -->
-        <StackPanel Grid.Row="3" Visibility="{Binding IsLegalEntity, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="0,0,0,10">
+        <StackPanel Grid.Row="3" Visibility="{Binding IsLegalEntity, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,10">
             <TextBlock Text="Контактные лица" FontSize="14" Margin="0,0,0,5"/>
             <Button x:Name="AddContactPersonButton" Content="Добавить контактное лицо" Click="AddContactPersonButton_Click" Margin="0,0,0,5"/>
             <ItemsControl x:Name="ContactPersonsItemsControl">
