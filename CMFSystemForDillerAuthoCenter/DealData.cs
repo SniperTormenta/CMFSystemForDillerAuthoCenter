@@ -42,5 +42,6 @@ public class Deal
     public string ServicedBy { get; set; } // ID сотрудника, который обслуживал заказ/обращение
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
-}
+   public string DisplayInfo { get; set; } // Добавляем свойство DisplayInfo
+    }
 }

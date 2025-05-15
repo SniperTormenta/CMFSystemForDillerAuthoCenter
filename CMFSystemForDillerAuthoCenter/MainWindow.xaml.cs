@@ -81,7 +81,7 @@ namespace CMFSystemForDillerAuthoCenter
                 DeliveryAddress = d.DeliveryAddress
             }).ToList();
 
-            System.Diagnostics.Debug.WriteLine($"MainWindow: Загружено {appeals.Count} обращений и {orders.Count} заказов.");
+            //System.Diagnostics.Debug.WriteLine($"MainWindow: Загружено {appeals.Count} обращений и {orders.Count} заказов.");
         }
 
         private string GetCarInfo(string carId)

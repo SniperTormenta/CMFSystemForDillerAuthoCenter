@@ -45,8 +45,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
         {
             InitializeComponent();
             DataContext = this;
-            _clientStorage = storage;
-            _employeeStorage = employeeStorage;
+            _clientStorage = storage ?? ClientStorage.Load() ?? new ClientStorage();
+            _employeeStorage = employeeStorage ?? new EmployeeStorage();
             _client = clientToEdit ?? new Client
             {
                 Id = $"C{(_clientStorage.Clients.Count + 1):D03}",
@@ -54,11 +54,9 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 ModifiedDate = DateTime.Now
             };
 
-            // Заполняем ComboBox сотрудников
             ResponsibleComboBox.ItemsSource = _employeeStorage.Employees;
             ResponsibleComboBox.DisplayMemberPath = "FullName";
 
-            // Инициализация формы
             if (clientToEdit != null)
             {
                 ClientType = clientToEdit.Type;
@@ -133,7 +131,6 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Проверка обязательных полей
             if (string.IsNullOrWhiteSpace(PhoneTextBox.Text) ||
                 string.IsNullOrWhiteSpace(EmailTextBox.Text) ||
                 CategoryComboBox.SelectedItem == null ||
@@ -163,7 +160,6 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 }
             }
 
-            // Проверка телефона
             string phone = PhoneTextBox.Text.Replace("+", "").Trim();
             if (!Regex.IsMatch(phone, @"^\d{11}$"))
             {
@@ -171,14 +167,12 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 return;
             }
 
-            // Проверка Email
             if (!Regex.IsMatch(EmailTextBox.Text, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
             {
                 MessageBox.Show("Email должен быть в формате example@domain.com");
                 return;
             }
 
-            // Проверка длины полей
             if (FirstNameTextBox.Text.Length > 50 ||
                 LastNameTextBox.Text.Length > 50 ||
                 MiddleNameTextBox.Text.Length > 50 ||
@@ -196,7 +190,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
             _client.Type = isIndividual ? "Физлицо" : "Юрлицо";
             _client.FirstName = FirstNameTextBox.Text;
-            _client.LastName = LastNameTextBox.Text; // Исправлено: было FirstNameTextBox.Text
+            _client.LastName = LastNameTextBox.Text;
             _client.MiddleName = MiddleNameTextBox.Text;
             _client.Gender = (GenderComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
             _client.CompanyName = CompanyNameTextBox.Text;
@@ -208,7 +202,6 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             _client.Responsible = (ResponsibleComboBox.SelectedItem as Employee)?.Id;
             _client.ModifiedDate = DateTime.Now;
 
-            // Очищаем контактные лица для физлиц
             if (isIndividual)
             {
                 _client.ContactPersons.Clear();

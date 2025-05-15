@@ -23,14 +23,14 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         {
             InitializeComponent();
             _carData = carData ?? DataStorage.CarData;
-            _clientStorage = clientStorage ?? throw new ArgumentNullException(nameof(clientStorage));
+            _clientStorage = clientStorage ?? ClientStorage.Load() ?? new ClientStorage();
             _employeeStorage = employeeStorage ?? new EmployeeStorage();
             _emailService = emailService ?? new EmailService();
             DataStorage.LoadDeals();
             _dealData = DataStorage.DealData;
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _clientStorage содержит {_clientStorage?.Clients?.Count ?? 0} клиентов.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow: _clientStorage содержит {_clientStorage?.Clients?.Count ?? 0} клиентов (из конструктора).");
             InitializeVariants();
             SetInitialView();
         }
@@ -45,17 +45,17 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             _emailService = new EmailService();
             DataStorage.LoadDeals();
             _dealData = DataStorage.DealData;
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _clientStorage содержит {_clientStorage?.Clients?.Count ?? 0} клиентов.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow (default): _clientStorage содержит {_clientStorage?.Clients?.Count ?? 0} клиентов (из конструктора).");
             InitializeVariants();
             SetInitialView();
         }
 
         private void InitializeVariants()
         {
-            System.Diagnostics.Debug.WriteLine($"InitializeVariants: _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
-            System.Diagnostics.Debug.WriteLine($"InitializeVariants: _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
+            //System.Diagnostics.Debug.WriteLine($"InitializeVariants: _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
+            //System.Diagnostics.Debug.WriteLine($"InitializeVariants: _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
             variant1 = new NewDealsVariant1(_dealData, _carData, DataStorage.SaveDeals);
             variant2 = new NewDealsVariant2(_dealData, _carData, DataStorage.SaveDeals);
         }
@@ -89,7 +89,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             DataStorage.SaveDeals();
             DataStorage.SaveCars();
             _clientStorage.Save();
-            System.Diagnostics.Debug.WriteLine($"NewDealsWindow OnClosing: Сохранено {_dealData?.Deals?.Count ?? 0} сделок.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsWindow OnClosing: Сохранено {_dealData?.Deals?.Count ?? 0} сделок.");
             base.OnClosing(e);
         }
 
@@ -129,7 +129,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine($"NewDealsButton_Click: Передача _clientStorage с {_clientStorage.Clients?.Count ?? 0} клиентами.");
+            //System.Diagnostics.Debug.WriteLine($"NewDealsButton_Click: Передача _clientStorage с {_clientStorage.Clients?.Count ?? 0} клиентами.");
             var newDealsWindow = new NewDealsWindow(_carData, _clientStorage, _employeeStorage, _emailService);
             newDealsWindow.Show();
             Close();

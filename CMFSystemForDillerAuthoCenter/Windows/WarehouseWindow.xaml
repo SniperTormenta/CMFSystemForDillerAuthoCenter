@@ -31,7 +31,7 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="MainMenu" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
+                            <Button x:Name="MainMenu" Click="MainWindowButton_Click" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
                              Foreground="White" />
                         </StackPanel>
                     </ListViewItem>
@@ -44,12 +44,6 @@
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Account" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Счета" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="50">
-                        <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Calendar" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="CalendareButton" Content="Отчет" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Click="CalendareButton_Click"/>
                         </StackPanel>
@@ -57,15 +51,15 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="People" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="ClientsButton" Content="Клиенты" Style="{StaticResource MaterialDesignFlatButton}" 
+                            <Button x:Name="ClientsButton" Click="ClientsButton_Click" Content="Клиенты" Style="{StaticResource MaterialDesignFlatButton}" 
          Foreground="White" />
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel x:Name="SkadButton" Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="GoToWarehousemenu" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" Click="SkadButton_MouseLeftButtonDown"/>
+                            <Button x:Name="GoToWarehousemenu" Content="Склад" Style="{StaticResource MaterialDesignFlatButton}" 
+                             Foreground="White"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
@@ -92,7 +86,7 @@
 
             <!-- DataGrid с автомобилями -->
             <DataGrid x:Name="CarsDataGrid" Grid.Row="1" ItemsSource="{Binding Cars}" 
-                      AutoGenerateColumns="False" Margin="10" CanUserAddRows="False" 
+                      AutoGenerateColumns="False" IsReadOnly="True" Margin="10" CanUserAddRows="False" 
                       MouseDoubleClick="CarsDataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>

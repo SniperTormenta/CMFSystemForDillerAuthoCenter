@@ -1,6 +1,5 @@
 ﻿using CMFSystemForDillerAuthoCenter.CallWindow;
 using System;
-using CMFSystemForDillerAuthoCenter.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,31 +13,43 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CMFSystemForDillerAuthoCenter.Services;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace CMFSystemForDillerAuthoCenter.Windows
 {
-    public partial class ClientsWindow : Window
+    public partial class ClientsWindow : Window, INotifyPropertyChanged
     {
         private ClientStorage _storage;
         private EmployeeStorage _employeeStorage;
-        private List<Client> _filteredClients;
+        private ObservableCollection<Client> _filteredClients;
         private ClientFilter _currentFilter;
         private DealData _dealData;
         private ClientStorage _clientStorage;
         private EmailService _emailService;
 
-        public List<Client> FilteredClients
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public ObservableCollection<Client> FilteredClients
         {
             get { return _filteredClients; }
-            set { _filteredClients = value; }
+            set
+            {
+                _filteredClients = value;
+                OnPropertyChanged(nameof(FilteredClients));
+                System.Diagnostics.Debug.WriteLine($"FilteredClients обновлен: {_filteredClients?.Count ?? 0} клиентов.");
+            }
         }
 
         public ClientsWindow()
         {
             InitializeComponent();
-            _storage = ClientStorage.Load();
-            _employeeStorage = EmployeeStorage.Load();
-            _filteredClients = _storage.Clients.ToList();
+            _storage = ClientStorage.Load() ?? new ClientStorage();
+            _employeeStorage = EmployeeStorage.Load() ?? new EmployeeStorage();
+            _dealData = DataStorage.DealData;
+            _clientStorage = _storage; // Инициализация для использования в других окнах
+            _emailService = new EmailService();
+            _filteredClients = new ObservableCollection<Client>(_storage.Clients);
             _currentFilter = new ClientFilter();
 
             ResponsibleFilterComboBox.ItemsSource = new List<string> { "Все ответственные" }.Concat(_employeeStorage.Employees.Select(e => e.FullName)).ToList();
@@ -46,6 +57,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             SavedFiltersItemsControl.ItemsSource = _storage.SavedFilters;
 
             DataContext = this;
+            ClientsDataGrid.ItemsSource = FilteredClients; // Привязка к FilteredClients
+            System.Diagnostics.Debug.WriteLine($"ClientsWindow инициализирован: Загружено {_storage.Clients.Count} клиентов, отображается {_filteredClients.Count}.");
         }
 
         private void AddClientButton_Click(object sender, RoutedEventArgs e)
@@ -54,9 +67,9 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             addWindow.Owner = this;
             if (addWindow.ShowDialog() == true)
             {
+                _storage.Save(); // Сохраняем изменения в файл
                 UpdateFilteredClients();
-                ClientsDataGrid.Items.Refresh();
-                UpdateTagFilterComboBox();
+                System.Diagnostics.Debug.WriteLine($"AddClient: После добавления клиента отображается {_filteredClients.Count} клиентов.");
             }
         }
 
@@ -68,9 +81,9 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 editWindow.Owner = this;
                 if (editWindow.ShowDialog() == true)
                 {
+                    _storage.Save();
                     UpdateFilteredClients();
-                    ClientsDataGrid.Items.Refresh();
-                    UpdateTagFilterComboBox();
+                    System.Diagnostics.Debug.WriteLine($"EditClient: После редактирования клиента отображается {_filteredClients.Count} клиентов.");
                 }
             }
         }
@@ -78,7 +91,6 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateFilteredClients();
-            ClientsDataGrid.Items.Refresh();
         }
 
         private void FilterButton_Click(object sender, RoutedEventArgs e)
@@ -96,8 +108,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             _currentFilter.TagFilter = TagFilterComboBox.SelectedItem?.ToString();
 
             UpdateFilteredClients();
-            ClientsDataGrid.Items.Refresh();
             UpdateFilterUI();
+            System.Diagnostics.Debug.WriteLine($"ApplyFilter: Применен фильтр, отображается {_filteredClients.Count} клиентов.");
         }
 
         private void ResetFilterButton_Click(object sender, RoutedEventArgs e)
@@ -111,8 +123,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             TagFilterComboBox.SelectedItem = TagFilterComboBox.Items.Cast<string>().First(i => i == "Все метки");
 
             UpdateFilteredClients();
-            ClientsDataGrid.Items.Refresh();
             UpdateFilterUI();
+            System.Diagnostics.Debug.WriteLine($"ResetFilter: Сброшены фильтры, отображается {_filteredClients.Count} клиентов.");
         }
 
         private void ApplySavedFilterButton_Click(object sender, RoutedEventArgs e)
@@ -132,8 +144,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     TagFilterComboBox.Items.Cast<string>().First(i => i == "Все метки");
 
                 UpdateFilteredClients();
-                ClientsDataGrid.Items.Refresh();
                 UpdateFilterUI();
+                System.Diagnostics.Debug.WriteLine($"ApplySavedFilter: Применен сохраненный фильтр, отображается {_filteredClients.Count} клиентов.");
             }
         }
 
@@ -145,6 +157,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 _storage.Save();
                 SavedFiltersItemsControl.ItemsSource = null;
                 SavedFiltersItemsControl.ItemsSource = _storage.SavedFilters;
+                System.Diagnostics.Debug.WriteLine($"DeleteSavedFilter: Удален сохраненный фильтр, осталось {_storage.SavedFilters.Count} фильтров.");
             }
         }
 
@@ -163,6 +176,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             SavedFiltersItemsControl.ItemsSource = _storage.SavedFilters;
             FilterNameTextBox.Text = string.Empty;
             SaveFilterPanel.Visibility = Visibility.Collapsed;
+            System.Diagnostics.Debug.WriteLine($"SaveFilter: Сохранен новый фильтр, всего фильтров: {_storage.SavedFilters.Count}.");
         }
 
         private void GroupActionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -181,8 +195,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     }
                     _storage.Save();
                     UpdateFilteredClients();
-                    ClientsDataGrid.Items.Refresh();
                     UpdateTagFilterComboBox();
+                    System.Diagnostics.Debug.WriteLine($"GroupAction Delete: Удалено {ClientsDataGrid.SelectedItems.Count} клиентов, осталось {_filteredClients.Count}.");
                 }
             }
             else if (selectedAction == "Изменить категорию")
@@ -208,7 +222,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                     }
                     _storage.Save();
                     UpdateFilteredClients();
-                    ClientsDataGrid.Items.Refresh();
+                    System.Diagnostics.Debug.WriteLine($"GroupAction ChangeCategory: Изменена категория для {ClientsDataGrid.SelectedItems.Count} клиентов.");
                 }
             }
 
@@ -219,7 +233,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
         {
             var searchText = SearchTextBox.Text.ToLower();
 
-            _filteredClients = _storage.Clients.Where(client =>
+            var filtered = _storage.Clients.Where(client =>
                 (string.IsNullOrEmpty(searchText) ||
                  client.ClientName.ToLower().Contains(searchText) ||
                  client.Phone.ToLower().Contains(searchText) ||
@@ -229,7 +243,8 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                                                 cp.Email.ToLower().Contains(searchText)))) &&
                 (_currentFilter.TypeFilter == "Все типы" || _currentFilter.TypeFilter == null || client.Type == _currentFilter.TypeFilter) &&
                 (_currentFilter.CategoryFilter == "Все категории" || _currentFilter.CategoryFilter == null || client.Category == _currentFilter.CategoryFilter) &&
-                (_currentFilter.ResponsibleFilter == "Все ответственные" || _currentFilter.ResponsibleFilter == null || client.Responsible == _currentFilter.ResponsibleFilter) &&
+                (_currentFilter.ResponsibleFilter == "Все ответственные" || _currentFilter.ResponsibleFilter == null ||
+                 client.Responsible == _employeeStorage.Employees.FirstOrDefault(e => e.FullName == _currentFilter.ResponsibleFilter)?.Id) &&
                 (_currentFilter.TagFilter == "Все метки" || _currentFilter.TagFilter == null || client.Tag == _currentFilter.TagFilter) &&
                 (_currentFilter.DateFilter == null || client.CreatedDate.Date == _currentFilter.DateFilter.Value.Date)
             ).ToList();
@@ -239,15 +254,21 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 switch (_currentFilter.SortBy)
                 {
                     case "По созданию":
-                        _filteredClients.Sort((a, b) => a.CreatedDate.CompareTo(b.CreatedDate));
+                        filtered.Sort((a, b) => a.CreatedDate.CompareTo(b.CreatedDate));
                         break;
                     case "По изменению":
-                        _filteredClients.Sort((a, b) => a.ModifiedDate.CompareTo(b.ModifiedDate));
+                        filtered.Sort((a, b) => a.ModifiedDate.CompareTo(b.CreatedDate));
                         break;
                     case "По названию":
-                        _filteredClients.Sort((a, b) => a.ClientName.CompareTo(b.ClientName));
+                        filtered.Sort((a, b) => a.ClientName.CompareTo(b.ClientName));
                         break;
                 }
+            }
+
+            FilteredClients.Clear();
+            foreach (var client in filtered)
+            {
+                FilteredClients.Add(client);
             }
         }
 
@@ -283,6 +304,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
             employeesWindow.Show();
             Close();
         }
+
         private void SkadButton_MouseLeftButtonDown(object sender, RoutedEventArgs e)
         {
             var warehouseWindow = new WarehouseWindow();
@@ -299,7 +321,7 @@ namespace CMFSystemForDillerAuthoCenter.Windows
 
         private void NewDealsButton_Click(object sender, RoutedEventArgs e)
         {
-            var newDealsWindow = new NewDealsWindow(DataStorage.CarData, _clientStorage);
+            var newDealsWindow = new NewDealsWindow(DataStorage.CarData, _clientStorage, _employeeStorage, _emailService);
             newDealsWindow.Show();
             Close();
         }
@@ -324,6 +346,11 @@ namespace CMFSystemForDillerAuthoCenter.Windows
                 Owner = this
             };
             reportWindow.ShowDialog();
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

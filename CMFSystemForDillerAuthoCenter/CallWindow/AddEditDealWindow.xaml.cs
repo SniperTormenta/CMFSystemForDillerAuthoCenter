@@ -11,33 +11,29 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 {
     public partial class AddEditDealWindow : Window
     {
-        private DealData dealData;
-        private CarData carData;
-        private ClientStorage clientStorage;
-        private EmployeeStorage employeeStorage;
-        private Deal deal;
-        private string initialType;
-        private DealData dealData1;
-        private ClientStorage client;
-
-        public DealData DealData { get; }
-        public DealData DealData1 { get; }
+        private DealData _dealData;
+        private CarData _carData;
+        private ClientStorage _clientStorage;
+        private EmployeeStorage _employeeStorage;
+        private Deal _deal;
+        private string _initialType;
 
         public AddEditDealWindow(DealData dealData, CarData carData, ClientStorage clientStorage, EmployeeStorage employeeStorage, Deal dealToEdit = null, string defaultType = null)
         {
             InitializeComponent();
-            this.dealData = DataStorage.DealData;
-            this.carData = DataStorage.CarData;
-            this.clientStorage = clientStorage;
-            this.employeeStorage = employeeStorage;
-            this.deal = dealToEdit ?? new Deal { Id = $"D{(dealData?.Deals?.Count ?? 0) + 1:D03}" };
+            _dealData = dealData ?? DataStorage.DealData;
+            _carData = carData ?? DataStorage.CarData;
+            _clientStorage = clientStorage ?? ClientStorage.Load() ?? new ClientStorage(); // Безопасная загрузка
+            _employeeStorage = employeeStorage ?? new EmployeeStorage();
+            _deal = dealToEdit ?? new Deal { Id = $"D{(_dealData?.Deals?.Count ?? 0) + 1:D03}" };
 
-            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: carData содержит {carData?.Cars?.Count ?? 0} автомобилей.");
-            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: dealData содержит {dealData?.Deals?.Count ?? 0} сделок перед редактированием.");
+            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: _carData содержит {_carData?.Cars?.Count ?? 0} автомобилей.");
+            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок перед редактированием.");
+            System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: _clientStorage содержит {_clientStorage?.Clients?.Count ?? 0} клиентов.");
 
             InitializeCarComboBox();
             InitializeClientComboBox();
-            InitializeServicedByComboBox(); // Инициализация списка сотрудников
+            InitializeServicedByComboBox();
             InitializeForm(defaultType);
 
             if (dealToEdit != null)
@@ -46,17 +42,17 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             }
         }
 
-        public AddEditDealWindow(DealData dealData1, ClientStorage client, EmployeeStorage employeeStorage, Deal deal)
+        public AddEditDealWindow(DealData dealData, ClientStorage clientStorage, EmployeeStorage employeeStorage, Deal deal)
         {
-            this.dealData1 = dealData1;
-            this.client = client;
-            this.employeeStorage = employeeStorage;
-            this.deal = deal;
+            _dealData = dealData;
+            _clientStorage = clientStorage;
+            _employeeStorage = employeeStorage;
+            _deal = deal;
         }
 
         private void InitializeCarComboBox()
         {
-            if (carData == null || !carData.Cars.Any())
+            if (_carData == null || !_carData.Cars.Any())
             {
                 MessageBox.Show("Список автомобилей пуст. Добавьте автомобили в склад перед созданием заказа.");
                 CarComboBox.IsEnabled = false;
@@ -64,7 +60,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             }
 
             CarComboBox.Items.Clear();
-            foreach (var car in carData.Cars)
+            foreach (var car in _carData.Cars)
             {
                 CarComboBox.Items.Add(new ComboBoxItem
                 {
@@ -76,13 +72,27 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void InitializeClientComboBox()
         {
-            ClientComboBox.ItemsSource = clientStorage.Clients;
+            if (_clientStorage == null || !_clientStorage.Clients.Any())
+            {
+                MessageBox.Show("Список клиентов пуст. Добавьте клиентов перед созданием сделки.");
+                ClientComboBox.IsEnabled = false;
+                return;
+            }
+
+            ClientComboBox.ItemsSource = _clientStorage.Clients;
             ClientComboBox.DisplayMemberPath = "ClientName";
         }
 
         private void InitializeServicedByComboBox()
         {
-            ServicedByComboBox.ItemsSource = employeeStorage.Employees;
+            if (_employeeStorage == null || !_employeeStorage.Employees.Any())
+            {
+                MessageBox.Show("Список сотрудников пуст. Добавьте сотрудников перед созданием сделки.");
+                ServicedByComboBox.IsEnabled = false;
+                return;
+            }
+
+            ServicedByComboBox.ItemsSource = _employeeStorage.Employees;
             ServicedByComboBox.DisplayMemberPath = "FullName";
         }
 
@@ -95,56 +105,56 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 TypeComboBox.IsEnabled = false;
             }
 
-            initialType = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            _initialType = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
             UpdateFormVisibility();
         }
 
         private void PopulateFields()
         {
             TypeComboBox.SelectedItem = TypeComboBox.Items.Cast<ComboBoxItem>()
-                .FirstOrDefault(i => i.Content.ToString() == deal.Type);
-            ClientComboBox.SelectedItem = clientStorage.Clients.FirstOrDefault(c => c.Id == deal.ClientId);
-            ClientNameTextBox.Text = deal.ClientName;
-            ClientPhoneTextBox.Text = deal.ClientPhone;
-            ClientEmailTextBox.Text = deal.ClientEmail;
-            if (DateTime.TryParse(deal.Date, out DateTime date))
+                .FirstOrDefault(i => i.Content.ToString() == _deal.Type);
+            ClientComboBox.SelectedItem = _clientStorage.Clients.FirstOrDefault(c => c.Id == _deal.ClientId);
+            ClientNameTextBox.Text = _deal.ClientName;
+            ClientPhoneTextBox.Text = _deal.ClientPhone;
+            ClientEmailTextBox.Text = _deal.ClientEmail;
+            if (DateTime.TryParse(_deal.Date, out DateTime date))
             {
                 DatePicker.SelectedDate = date;
             }
-            ServicedByComboBox.SelectedItem = employeeStorage.Employees.FirstOrDefault(e => e.Id == deal.ServicedBy);
-            ThemeTextBox.Text = deal.Theme;
-            NotesTextBox.Text = deal.Notes;
+            ServicedByComboBox.SelectedItem = _employeeStorage.Employees.FirstOrDefault(e => e.Id == _deal.ServicedBy);
+            ThemeTextBox.Text = _deal.Theme;
+            NotesTextBox.Text = _deal.Notes;
 
-            if (deal.Type == "Обращение")
+            if (_deal.Type == "Обращение")
             {
                 AppealStatusComboBox.SelectedItem = AppealStatusComboBox.Items.Cast<ComboBoxItem>()
-                    .FirstOrDefault(i => i.Content.ToString() == deal.Status);
+                    .FirstOrDefault(i => i.Content.ToString() == _deal.Status);
             }
             else
             {
                 OrderStatusComboBox.SelectedItem = OrderStatusComboBox.Items.Cast<ComboBoxItem>()
-                    .FirstOrDefault(i => i.Content.ToString() == deal.Status);
+                    .FirstOrDefault(i => i.Content.ToString() == _deal.Status);
 
                 CarComboBox.SelectedItem = CarComboBox.Items.Cast<ComboBoxItem>()
-                    .FirstOrDefault(i => i.Tag.ToString() == deal.CarId);
+                    .FirstOrDefault(i => i.Tag.ToString() == _deal.CarId);
 
                 UpdateCarImage();
 
-                AmountTextBox.Text = deal.Amount.ToString();
+                AmountTextBox.Text = _deal.Amount.ToString();
                 PaymentTermsComboBox.SelectedItem = PaymentTermsComboBox.Items.Cast<ComboBoxItem>()
-                    .FirstOrDefault(i => i.Content.ToString() == deal.PaymentTerms);
-                DeliveryCheckBox.IsChecked = deal.IsDeliveryRequired;
-                if (deal.IsDeliveryRequired)
+                    .FirstOrDefault(i => i.Content.ToString() == _deal.PaymentTerms);
+                DeliveryCheckBox.IsChecked = _deal.IsDeliveryRequired;
+                if (_deal.IsDeliveryRequired)
                 {
                     DeliveryDateLabel.Visibility = Visibility.Visible;
                     DeliveryDatePicker.Visibility = Visibility.Visible;
                     DeliveryAddressLabel.Visibility = Visibility.Visible;
                     DeliveryAddressTextBox.Visibility = Visibility.Visible;
-                    if (DateTime.TryParse(deal.DeliveryDate, out DateTime deliveryDate))
+                    if (DateTime.TryParse(_deal.DeliveryDate, out DateTime deliveryDate))
                     {
                         DeliveryDatePicker.SelectedDate = deliveryDate;
                     }
-                    DeliveryAddressTextBox.Text = deal.DeliveryAddress;
+                    DeliveryAddressTextBox.Text = _deal.DeliveryAddress;
                 }
             }
         }
@@ -202,7 +212,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                 CarLabel.Visibility = Visibility.Visible;
                 CarComboBox.Visibility = Visibility.Visible;
                 CarImage.Visibility = CarComboBox.SelectedItem != null ? Visibility.Visible : Visibility.Collapsed;
-                if (carData != null && carData.Cars.Any())
+                if (_carData != null && _carData.Cars.Any())
                 {
                     CarComboBox.IsEnabled = true;
                 }
@@ -257,7 +267,7 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
             if (CarComboBox.SelectedItem != null)
             {
                 var selectedCarId = (CarComboBox.SelectedItem as ComboBoxItem)?.Tag.ToString();
-                var selectedCar = carData?.Cars.FirstOrDefault(c => c.Id == selectedCarId);
+                var selectedCar = _carData?.Cars.FirstOrDefault(c => c.Id == selectedCarId);
                 if (selectedCar != null && !string.IsNullOrEmpty(selectedCar.PhotoPath))
                 {
                     try
@@ -289,13 +299,15 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
 
         private void AddClientButton_Click(object sender, RoutedEventArgs e)
         {
-            var addClientWindow = new AddEditClientWindow(clientStorage, employeeStorage, null);
-            addClientWindow.Owner = this;
+            var addClientWindow = new AddEditClientWindow(_clientStorage, _employeeStorage, null)
+            {
+                Owner = this
+            };
             if (addClientWindow.ShowDialog() == true)
             {
                 ClientComboBox.ItemsSource = null;
-                ClientComboBox.ItemsSource = clientStorage.Clients;
-                ClientComboBox.SelectedItem = clientStorage.Clients.Last();
+                ClientComboBox.ItemsSource = _clientStorage.Clients;
+                ClientComboBox.SelectedItem = _clientStorage.Clients.Last();
             }
         }
 
@@ -373,16 +385,16 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                     return;
                 }
 
-                deal.Type = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                deal.ClientId = (ClientComboBox.SelectedItem as Client)?.Id;
-                deal.ClientName = ClientNameTextBox.Text;
-                deal.ClientPhone = ClientPhoneTextBox.Text;
-                deal.ClientEmail = ClientEmailTextBox.Text;
-                deal.Date = DatePicker.SelectedDate.Value.ToString("dd.MM.yyyy");
-                deal.Notes = NotesTextBox.Text;
-                deal.ServicedBy = (ServicedByComboBox.SelectedItem as Employee)?.Id;
+                _deal.Type = (TypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                _deal.ClientId = (ClientComboBox.SelectedItem as Client)?.Id;
+                _deal.ClientName = ClientNameTextBox.Text;
+                _deal.ClientPhone = ClientPhoneTextBox.Text;
+                _deal.ClientEmail = ClientEmailTextBox.Text;
+                _deal.Date = DatePicker.SelectedDate.Value.ToString("dd.MM.yyyy");
+                _deal.Notes = NotesTextBox.Text;
+                _deal.ServicedBy = (ServicedByComboBox.SelectedItem as Employee)?.Id;
 
-                if (deal.Type == "Обращение")
+                if (_deal.Type == "Обращение")
                 {
                     if (string.IsNullOrWhiteSpace(ThemeTextBox.Text))
                     {
@@ -399,8 +411,8 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                         MessageBox.Show("Подробности не должны превышать 500 символов.");
                         return;
                     }
-                    deal.Theme = ThemeTextBox.Text;
-                    deal.Status = (AppealStatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                    _deal.Theme = ThemeTextBox.Text;
+                    _deal.Status = (AppealStatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
                 }
                 else
                 {
@@ -441,37 +453,37 @@ namespace CMFSystemForDillerAuthoCenter.CallWindow
                         }
                     }
 
-                    deal.CarId = (CarComboBox.SelectedItem as ComboBoxItem)?.Tag.ToString();
-                    deal.Amount = amount;
-                    deal.PaymentTerms = (PaymentTermsComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                    deal.IsDeliveryRequired = DeliveryCheckBox.IsChecked ?? false;
-                    if (deal.IsDeliveryRequired)
+                    _deal.CarId = (CarComboBox.SelectedItem as ComboBoxItem)?.Tag.ToString();
+                    _deal.Amount = amount;
+                    _deal.PaymentTerms = (PaymentTermsComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                    _deal.IsDeliveryRequired = DeliveryCheckBox.IsChecked ?? false;
+                    if (_deal.IsDeliveryRequired)
                     {
-                        deal.DeliveryDate = DeliveryDatePicker.SelectedDate?.ToString("dd.MM.yyyy");
-                        deal.DeliveryAddress = DeliveryAddressTextBox.Text;
+                        _deal.DeliveryDate = DeliveryDatePicker.SelectedDate?.ToString("dd.MM.yyyy");
+                        _deal.DeliveryAddress = DeliveryAddressTextBox.Text;
                     }
                     else
                     {
-                        deal.DeliveryDate = null;
-                        deal.DeliveryAddress = null;
+                        _deal.DeliveryDate = null;
+                        _deal.DeliveryAddress = null;
                     }
-                    deal.Status = $"{(PaymentStatusComboBox.SelectedItem as ComboBoxItem)?.Content} / {(OrderStatusComboBox.SelectedItem as ComboBoxItem)?.Content}";
+                    _deal.Status = $"{(PaymentStatusComboBox.SelectedItem as ComboBoxItem)?.Content} / {(OrderStatusComboBox.SelectedItem as ComboBoxItem)?.Content}";
                 }
 
-                if (deal.CreatedDate == default)
+                if (_deal.CreatedDate == default)
                 {
-                    deal.CreatedDate = DateTime.Now;
+                    _deal.CreatedDate = DateTime.Now;
                 }
-                deal.ModifiedDate = DateTime.Now;
+                _deal.ModifiedDate = DateTime.Now;
 
-                if (!dealData.Deals.Contains(deal))
+                if (!_dealData.Deals.Contains(_deal))
                 {
-                    dealData.Deals.Add(deal);
+                    _dealData.Deals.Add(_deal);
                 }
 
                 DataStorage.SaveDeals();
 
-                System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: После сохранения dealData содержит {dealData?.Deals?.Count ?? 0} сделок.");
+                System.Diagnostics.Debug.WriteLine($"AddEditDealWindow: После сохранения _dealData содержит {_dealData?.Deals?.Count ?? 0} сделок.");
 
                 DialogResult = true;
                 Close();

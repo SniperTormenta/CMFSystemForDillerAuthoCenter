@@ -34,7 +34,7 @@
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="MainMenu" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
+                            <Button x:Name="MainMenu" Click="MainWindowButton_Click" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
                              Foreground="White" />
                         </StackPanel>
                     </ListViewItem>
@@ -43,12 +43,6 @@
                             <materialDesign:PackIcon Kind="Link" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="NewDealsButton" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
                              Foreground="White" Click="NewDealsButton_Click"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="50">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Account" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Счета" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
@@ -99,7 +93,7 @@
                 <Button Content="Добавить клиента" Click="AddClientButton_Click" HorizontalAlignment="Right"/>
             </StackPanel>
 
-            <DataGrid x:Name="ClientsDataGrid" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding FilteredClients}" Margin="10" MouseDoubleClick="ClientsDataGrid_MouseDoubleClick" SelectionMode="Extended">
+            <DataGrid x:Name="ClientsDataGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding FilteredClients}" Margin="10" MouseDoubleClick="ClientsDataGrid_MouseDoubleClick" SelectionMode="Extended">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*"/>
                     <DataGridTextColumn Header="Контактное лицо" Binding="{Binding ContactPersons[0].FullName}" Width="*"/>

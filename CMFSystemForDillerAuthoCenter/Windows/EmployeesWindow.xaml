@@ -47,12 +47,6 @@
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Account" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Счета" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="50">
-                        <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Calendar" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="CalendareButton" Content="Отчет" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Click="CalendareButton_Click"/>
                         </StackPanel>
@@ -67,7 +61,7 @@
                     <ListViewItem Height="50">
                         <StackPanel x:Name="SkadButton" Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="GoToWarehousemenu" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
+                            <Button x:Name="GoToWarehousemenu" Content="Склад" Style="{StaticResource MaterialDesignFlatButton}" 
                              Foreground="White" Click="SkadButton_MouseLeftButtonDown"/>
                         </StackPanel>
                     </ListViewItem>
@@ -103,7 +97,7 @@
                 <Button Content="Удалить сотрудника" Click="DeleteEmployeeButton_Click" Tag="{Binding}" Margin="20,0,0,0"/>
             </StackPanel>
 
-            <DataGrid x:Name="EmployeesDataGrid" Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding FilteredEmployees}" Margin="10" MouseDoubleClick="EmployeesDataGrid_MouseDoubleClick">
+            <DataGrid x:Name="EmployeesDataGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding FilteredEmployees}" Margin="10" MouseDoubleClick="EmployeesDataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="*"/>
                     <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*"/>

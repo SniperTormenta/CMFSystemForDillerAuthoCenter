@@ -26,27 +26,21 @@
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Email" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="EmailButton" Content="Почта" Style="{StaticResource MaterialDesignFlatButton}" 
-         Foreground="White" Click="EmailButton_Click"/>
+                                    Foreground="White" Click="EmailButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="MainMenu" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" />
+                            <Button x:Name="MainMenu" Click="MainWindowButton_Click" Content="Главное меню" Style="{StaticResource MaterialDesignFlatButton}" 
+                                    Foreground="White" />
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Link" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="NewDealsButton" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" Click="NewDealsButton_Click"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="50">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Account" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <TextBlock Text="Счета" VerticalAlignment="Center" Margin="5,0" Foreground="White"/>
+                                    Foreground="White" Click="NewDealsButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
@@ -59,21 +53,21 @@
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="People" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="ClientsButton" Content="Клиенты" Style="{StaticResource MaterialDesignFlatButton}" 
-         Foreground="White" />
+                                    Foreground="White" />
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel x:Name="SkadButton" Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ShoppingCart" Width="24" Height="24" Margin="10,0" Foreground="White"/>
-                            <Button x:Name="GoToWarehousemenu" Content="Сделки" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" Click="SkadButton_MouseLeftButtonDown"/>
+                            <Button x:Name="GoToWarehousemenu" Content="Склад" Style="{StaticResource MaterialDesignFlatButton}" 
+                                    Foreground="White" Click="SkadButton_MouseLeftButtonDown"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="50">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="PeopleOutline" Width="24" Height="24" Margin="10,0" Foreground="White"/>
                             <Button x:Name="EmployeesButton" Content="Сотрудники" Style="{StaticResource MaterialDesignFlatButton}" 
-                             Foreground="White" Click="EmployeesButton_Click"/>
+                                    Foreground="White" Click="EmployeesButton_Click"/>
                         </StackPanel>
                     </ListViewItem>
                 </ListView>
@@ -98,6 +92,12 @@
                               Padding="9" 
                               Checked="ViewToggleButton_Checked" 
                               Unchecked="ViewToggleButton_Unchecked"/>
+                <Button x:Name="CreateSaleContractButton" 
+                        Content="Формирование договора" 
+                        Style="{StaticResource MaterialDesignFlatButton}" 
+                        HorizontalAlignment="Right" 
+                        Margin="400,0,0,0" 
+                        Click="CreateSaleContractButton_Click" Background="#FF673AB7" Foreground="White"/>
             </StackPanel>
 
             <!-- Контейнер для вариантов -->
